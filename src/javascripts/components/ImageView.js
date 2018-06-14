@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import 'stylesheets/ImageView'
 import _ from 'lodash'
 
@@ -32,7 +33,7 @@ export default class ImaveView extends React.Component {
 
   constructor(props, context) {
     super(props, context)
-
+    this.btnRef = React.createRef();
     this.state = {
       active: false,
       vision: {},
@@ -43,7 +44,7 @@ export default class ImaveView extends React.Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.emitter.addListener('showSidebar', (id) => {
       this.setState({
         id,
@@ -66,8 +67,8 @@ export default class ImaveView extends React.Component {
   }
 
   onLoadFocusedImage() {
-    const imageViewRect = this.refs.imageView.getBoundingClientRect()
-    const img = this.refs.focusedImage
+    const imageViewRect = this.btnRef.imageView.getBoundingClientRect()
+    const img = this.btnRef.focusedImage
     const imgRect = img.getBoundingClientRect()
     this.setState(s => _.assign({}, s, {
       imgLeft: imgRect.left - imageViewRect.left,
@@ -116,10 +117,10 @@ export default class ImaveView extends React.Component {
     }
     if(this.state.active) {
       return (
-        <div ref="imageView" className="image-view" style={style.wrapper}>
+        <div ref={this.btnRef} className="image-view" style={style.wrapper}>
           <img
             className="focused-image"
-            ref="focusedImage"
+            ref={this.btnRef}
             src={getImageUrl(this.state.id)}
             onLoad={this.onLoadFocusedImage.bind(this)}
           />

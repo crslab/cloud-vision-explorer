@@ -118,9 +118,16 @@ if __name__ == "__main__":
                 if X_labels[data_point_idx] == arg_p.specific_cluster_name:
                     data_points_in_specific_cluster_indexes.append(data_point_idx)
 
+	# print('most common labels', most_common_labels)
+
         i = 0
-        while most_common_labels[i][0] in labels:
-            i += 1
+        while i < len(most_common_labels):
+	    if most_common_labels[i][0] in labels:
+                i += 1
+	    else:
+		break
+	if i == len(most_common_labels):
+	    i -= 1
 
         dominant_label = most_common_labels[i][0]
         frequency_dominant_label = most_common_labels[i][1]

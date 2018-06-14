@@ -6,13 +6,17 @@ const path = require('path')
 const axios = require('axios')
 
 const VISION_API_ENDPOINT = 'https://vision.googleapis.com/v1/images:annotate'
-
 const images = fs.readFileSync('files.txt').toString().split('\n')
+
+//console.log(_.map(images, imagePath => imagePath));
+
+//process.exit();
+
 const requests = _.map(images, (imagePath) => {
   const requestBody = {
     image: {
       source: {
-        gcs_image_uri: imagePath
+        gcsImageUri: imagePath
       }
     },
     features: [
@@ -25,6 +29,8 @@ const requests = _.map(images, (imagePath) => {
       {type: 'IMAGE_PROPERTIES', maxResults: 10}
     ]
   }
+//return requestBody;
+
 
   return ((cb) => {
     axios({
@@ -34,6 +40,7 @@ const requests = _.map(images, (imagePath) => {
       data: {requests: requestBody}
     })
     .then((res) => {
+//console.log(res);
       const baseName = path.basename(imagePath, '.jpg')
       fs.writeFileSync(`results/${baseName}.json`, JSON.stringify(res.data.responses, null, 2))
       console.log(imagePath)
@@ -42,6 +49,10 @@ const requests = _.map(images, (imagePath) => {
   })
 })
 
+//console.log(requests[0]);
+//process.exit();
+
+//const test_requests = [requests[0]];
 
 const timerId = setInterval(() => {
   if(_.isEmpty(requests)){
@@ -49,5 +60,5 @@ const timerId = setInterval(() => {
     return
   }
 
-  requests.pop()()
+   requests.pop()()
 }, 1000)

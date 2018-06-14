@@ -20,8 +20,8 @@ export default class EntrancePage extends Component {
           <RippleLink className="launch-button" to="/galaxy">LAUNCH</RippleLink>
           <nav>
             <ul>
-              <li><a href="https://cloud.google.com/blog/big-data/2016/05/explore-the-galaxy-of-images-with-cloud-vision-api" target="_blank">What&apos;s this?</a></li>
-              <li><a href="https://github.com/reactiveai/cloud-vision-explorer" target="_blank">GitHub repo</a></li>
+              <li><a href="https://cloud.google.com/blog/big-data/2016/05/explore-the-galaxy-of-images-with-cloud-vision-api" target="_blank" rel="noopener noreferrer">What&apos;s this?</a></li>
+              <li><a href="https://github.com/reactiveai/cloud-vision-explorer" target="_blank" rel="noopener noreferrer">GitHub repo</a></li>
             </ul>
           </nav>
         </div>
