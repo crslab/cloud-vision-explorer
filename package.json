@@ -11,6 +11,7 @@
     "build": "gulp build"
   },
   "dependencies": {
+    "axios": "0.15.3",
     "exports-loader": "^0.6.3",
     "fbemitter": "^2.0.2",
     "file-loader": "^0.8.5",
