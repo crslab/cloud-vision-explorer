@@ -1,5 +1,4 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { PropTypes } from 'react'
 
 const styles = {
   plusTopLeft: {
@@ -50,7 +49,7 @@ PlusIcon.propTypes = {
 export default class PlusTitle extends React.Component {
   static get propTypes() {
     return {
-      children: PropTypes.node
+      children: React.PropTypes.node
     }
   }
 

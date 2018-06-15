@@ -1,5 +1,4 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { PropTypes } from 'react'
 import numeral from 'numeral'
 
 const style = {
@@ -29,7 +28,7 @@ export default class ClusterLabel extends React.Component {
     this.state = { count: 0 }
   }
 
-  UNSAFE_componentWillMount() {
+  componentWillMount() {
     this.props.emitter.addListener('imageCount', (count) => {
       this.setState({count})
     })

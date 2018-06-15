@@ -4,7 +4,6 @@ import TWEEN    from 'tween.js'
 import _        from 'lodash'
 import Shaders  from '../misc/Shaders.js'
 import Random   from 'random-js'
-import PropTypes from 'prop-types'
 
 import { getVisionJsonURL,
          preloadImage }               from '../misc/Util.js'
@@ -56,9 +55,7 @@ const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
 
 const textureLoader = new THREE.TextureLoader()
 
-var createReactClass = require('create-react-class');
-
-var RendView = createReactClass({
+export default React.createClass({
   render() {
     return (
       <div ref={(c) => this._container = c} className="render-view"></div>
@@ -66,7 +63,7 @@ var RendView = createReactClass({
   },
 
   propTypes: {
-    emitter: PropTypes.object.isRequired
+    emitter: React.PropTypes.object.isRequired
   },
 
   // Perhaps this is added for performance reasons?
@@ -634,5 +631,3 @@ var RendView = createReactClass({
     animate()
   }
 })
-
-module.exports = RendView;

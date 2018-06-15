@@ -1,14 +1,9 @@
 
 import React    from 'react'
-import PropTypes from 'prop-types'
 
 import getBase64FaceImage from '../misc/FaceRenderer.js'
 
-var createReactClass = require('create-react-class');
-
-var FView = createReactClass({
-  displayName: 'FView',
-  
+export default React.createClass({
   render() {
     return (
       <img ref={(c) => this._image = c} className={this.props.className} />
@@ -16,11 +11,11 @@ var FView = createReactClass({
   },
 
   propTypes: {
-    className: PropTypes.string,
-    faceColor: PropTypes.number,
-    rollAngle: PropTypes.number,
-    panAngle: PropTypes.number,
-    tiltAngle: PropTypes.number
+    className: React.PropTypes.string,
+    faceColor: React.PropTypes.number,
+    rollAngle: React.PropTypes.number,
+    panAngle: React.PropTypes.number,
+    tiltAngle: React.PropTypes.number
   },
 
   // Perhaps this is added for performance reasons?
@@ -35,4 +30,3 @@ var FView = createReactClass({
       this.props.faceColor)
   }
 })
-module.exports = FView;
