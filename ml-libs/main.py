@@ -121,6 +121,7 @@ if __name__ == "__main__":
 	# print('most common labels', most_common_labels)
 
         i = 0
+<<<<<<< HEAD
         while i < len(most_common_labels):
 	    if most_common_labels[i][0] in labels:
                 i += 1
@@ -128,6 +129,16 @@ if __name__ == "__main__":
 		break
 	if i == len(most_common_labels):
 	    i -= 1
+=======
+
+        while i < len(most_common_labels):
+            if most_common_labels[i][0] in labels:
+                i += 1
+            else:
+                break
+        if i == len(most_common_labels):
+            i -= 1
+>>>>>>> 5d54793d5085f22c16648654bc8a7d91e7f24278
 
         dominant_label = most_common_labels[i][0]
         frequency_dominant_label = most_common_labels[i][1]
