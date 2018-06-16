@@ -6,7 +6,7 @@ import { gcsBucketName } from '../config.js'
 
 module.exports = {
   getVisionJsonURL: (id) => {
-    return `https://storage.googleapis.com/${gcsBucketName}/vision/result/${id}.json`
+    return `https://storage.googleapis.com/${gcsBucketName}/vision/results/${id}.json`
   },
   preloadImage: (url) => {
     const img = new Image()
