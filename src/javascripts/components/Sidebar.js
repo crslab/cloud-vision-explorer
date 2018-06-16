@@ -3,7 +3,8 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { Tab, Tabs } from 'react-toolbox/lib/tabs'
+import { Tab } from 'react-toolbox/lib/tabs/Tab'
+import { Tabs } from 'react-toolbox/lib/tabs/Tabs'
 import Drawer from 'react-toolbox/lib/drawer'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Button from 'react-toolbox/lib/button'
@@ -25,10 +26,13 @@ class SidebarTabs extends Tabs {
     const { headers, contents } = this.parseChildren()
     if(this.props.className) { className += ` ${this.props.className}` }
 
+    console.log(headers)
+    console.log(contents)
+
     return (
       <div id='tabs' data-react-toolbox='tabs' className={className}>
         {this.renderContents(contents)}
-        <nav className={tabStyle.navigation} id='navigation'>
+        <nav className={tabStyle.navigation} id='navigation' role='tablist' ref={e => { this.navigationNode = e }}>
           {this.renderHeaders(headers)}
         </nav>
         <span className={tabStyle.pointer}
@@ -39,6 +43,11 @@ class SidebarTabs extends Tabs {
 }
 
 class GraphTab extends Component {
+  constructor(props) {
+    super(props);
+    console.log(this.props)
+  }
+
   static get propTypes() {
     return {
       vision: PropTypes.object.isRequired,
@@ -66,8 +75,7 @@ class GraphTab extends Component {
         marginTop: '20px',
         height: '100px',
         backgroundPosition: 'center',
-        backgroundImage: `url('https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=11&size=306x200\
-&markers=${latitude},${longitude}&key=${gcsGoogleStaticMapsApiKey}')`
+        backgroundImage: `url('https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=11&size=306x200&markers=${latitude},${longitude}&key=${gcsGoogleStaticMapsApiKey}')`
       }
     }
 
@@ -86,6 +94,7 @@ class GraphTab extends Component {
 
   render() {
     const { vision } = this.props
+    console.log(vision)
     const classForPerson = (idx) => {
       const classes = ['primary', 'secondary', 'third']
       return `face-detection-person ${classes[idx % classes.length]}`

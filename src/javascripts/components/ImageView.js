@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types';
 import 'stylesheets/ImageView'
 import _ from 'lodash'
@@ -69,8 +70,8 @@ export default class ImaveView extends Component {
   }
 
   onLoadFocusedImage() {
-    const imageViewRect = this.imageViewRef.getBoundingClientRect()
-    const img = this.focusedImageRef
+    const imageViewRect = this.imageViewRef.current.getBoundingClientRect()
+    const img = this.focusedImageRef.current
     const imgRect = img.getBoundingClientRect()
     this.setState(s => _.assign({}, s, {
       imgLeft: imgRect.left - imageViewRect.left,
@@ -119,10 +120,10 @@ export default class ImaveView extends Component {
     }
     if(this.state.active) {
       return (
-        <div ref={imageViewRef} className="image-view" style={style.wrapper}>
+        <div ref={this.imageViewRef} className="image-view" style={style.wrapper}>
           <img
             className="focused-image"
-            ref={focusedImageRef}
+            ref={this.focusedImageRef}
             src={getImageUrl(this.state.id)}
             onLoad={this.onLoadFocusedImage.bind(this)}
           />
