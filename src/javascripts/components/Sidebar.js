@@ -20,6 +20,9 @@ import { getVisionJsonURL } from '../misc/Util.js'
 
 class SidebarTabs extends Tabs {
   // Copied mainly from the original class, but modified some orders and styles
+  constructor() {
+    super();
+  }
   render () {
     let className = tabStyle.root
     const { headers, contents } = this.parseChildren()

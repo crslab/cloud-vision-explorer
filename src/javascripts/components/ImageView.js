@@ -119,10 +119,10 @@ export default class ImaveView extends Component {
     }
     if(this.state.active) {
       return (
-        <div ref={imageViewRef} className="image-view" style={style.wrapper}>
+        <div ref={this.imageViewRef} className="image-view" style={style.wrapper}>
           <img
             className="focused-image"
-            ref={focusedImageRef}
+            ref={this.focusedImageRef}
             src={getImageUrl(this.state.id)}
             onLoad={this.onLoadFocusedImage.bind(this)}
           />
