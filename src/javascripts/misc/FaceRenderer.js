@@ -1,5 +1,5 @@
 
-import THREE    from 'three'
+import * as THREE from 'three'
 
 const FACE_RENDER_WIDTH = 80
 const FACE_RENDER_HEIGHT = 80

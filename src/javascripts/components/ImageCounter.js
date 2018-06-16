@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import numeral from 'numeral'
 
@@ -15,7 +15,7 @@ const style = {
   }
 }
 
-export default class ClusterLabel extends React.Component {
+export default class ClusterLabel extends Component {
   static get propTypes() {
     return {
       emitter: PropTypes.object.isRequired,

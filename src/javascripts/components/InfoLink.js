@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
 import 'stylesheets/InfoLink'
@@ -42,7 +42,7 @@ const getThumbUrl = (id) => {
   return `https://storage.googleapis.com/${gcsBucketName}/thumbnail/64x64/${id}.jpg`
 }
 
-export default class InfoLink extends React.Component {
+export default class InfoLink extends Component {
   static get propTypes() {
     return {
       emitter: PropTypes.object.isRequired,

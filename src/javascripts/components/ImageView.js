@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import 'stylesheets/ImageView'
 import _ from 'lodash'
@@ -23,7 +23,7 @@ const style = {
 
 import { getVisionJsonURL } from '../misc/Util.js'
 
-export default class ImaveView extends React.Component {
+export default class ImaveView extends Component {
   static get propTypes() {
     return {
       emitter: PropTypes.object.isRequired,

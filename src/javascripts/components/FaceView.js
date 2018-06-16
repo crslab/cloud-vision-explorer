@@ -1,9 +1,9 @@
 
-import React    from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import getBase64FaceImage from '../misc/FaceRenderer.js'
 
-class FaceView extends React.Component{
+class FaceView extends Component{
   render() {
     return (
       <img ref={(c) => this._image = c} className={this.props.className} />

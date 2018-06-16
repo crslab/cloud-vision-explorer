@@ -1,6 +1,6 @@
-import React    from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import THREE    from 'three'
+import * as THREE from 'three'
 import TWEEN    from 'tween.js'
 import _        from 'lodash'
 import Shaders  from '../misc/Shaders.js'
@@ -56,7 +56,7 @@ const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
 
 const textureLoader = new THREE.TextureLoader()
 
-class RenderView extends React.Component{
+class RenderView extends Component{
   render() {
     return (
       <div ref={(c) => this._container = c} className="render-view"></div>

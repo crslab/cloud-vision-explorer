@@ -1,7 +1,7 @@
 /*global $*/
 
 import _ from 'lodash'
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs'
 import Drawer from 'react-toolbox/lib/drawer'
@@ -38,7 +38,7 @@ class SidebarTabs extends Tabs {
   }
 }
 
-class GraphTab extends React.Component {
+class GraphTab extends Component {
   static get propTypes() {
     return {
       vision: PropTypes.object.isRequired,
@@ -297,7 +297,7 @@ class GraphTab extends React.Component {
   }
 }
 
-export default class Sidebar extends React.Component {
+export default class Sidebar extends Component {
   static get propTypes() {
     return {
       sidebar: PropTypes.object.isRequired,

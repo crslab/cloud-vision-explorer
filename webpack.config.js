@@ -38,14 +38,6 @@ module.exports = {
             }
           },
           {
-            loader: "postcss-loader",
-            options: {
-              config: {
-                path: path.resolve(__dirname, './src/stylesheets')
-              }
-            }
-          },
-          {
             loader: "sass-loader",
             options: {
               sourceMap: true
