@@ -1,7 +1,8 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import ToolboxApp from 'react-toolbox/lib/app'
+// import ToolboxApp from 'react-toolbox/lib/app'
 import ImageView from './ImageView'
 import RenderView from './RenderView'
 import InfoLink from './InfoLink'
@@ -44,7 +45,6 @@ class FrontPage extends Component {
 
     return (
       <div >
-        <ToolboxApp>
           <ImageCounter style={style.imageCounter} emitter={emitter} />
           <InfoLink style={style.infoLink} emitter={emitter} />
           <ImageView
@@ -53,7 +53,6 @@ class FrontPage extends Component {
           />
           <Sidebar sidebar={sidebar} emitter={emitter} {...sidebarBounds} />
           <RenderView emitter={emitter} />
-        </ToolboxApp>
         <ReactiveLogo />
       </div>
     )

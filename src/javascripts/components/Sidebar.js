@@ -1,14 +1,15 @@
 /*global $*/
 
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import { Tab, Tabs } from 'react-toolbox'
+import React from 'react'
+import PropTypes from 'prop-types';
+import { Tab, Tabs } from 'react-toolbox/lib/tabs'
 import Drawer from 'react-toolbox/lib/drawer'
 import FontIcon from 'react-toolbox/lib/font_icon'
 import Button from 'react-toolbox/lib/button'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import 'stylesheets/Sidebar'
-import tabStyle from 'react-toolbox/lib/tabs/style'
+import tabStyle from 'react-toolbox/lib/tabs/theme.css'
 import PlusTitle from './PlusTitle'
 import FaceView from './FaceView'
 import Switch from 'react-toolbox/lib/switch'
@@ -25,9 +26,9 @@ class SidebarTabs extends Tabs {
     if(this.props.className) { className += ` ${this.props.className}` }
 
     return (
-      <div ref='tabs' data-react-toolbox='tabs' className={className}>
+      <div id='tabs' data-react-toolbox='tabs' className={className}>
         {this.renderContents(contents)}
-        <nav className={tabStyle.navigation} ref='navigation'>
+        <nav className={tabStyle.navigation} id='navigation'>
           {this.renderHeaders(headers)}
         </nav>
         <span className={tabStyle.pointer}
@@ -77,7 +78,7 @@ class GraphTab extends React.Component {
         <div>{annon.description}</div>
         <div style={style.wrapper}>
           {_.round(latitude, 6)}, {_.round(longitude, 6)}
-          <a href={link} target="_blank"><div style={style.maps}></div></a>
+          <a href={link} ><div style={style.maps}></div></a>
         </div>
       </div>
     )
@@ -316,7 +317,7 @@ export default class Sidebar extends React.Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // Listening on event
     this.props.emitter.addListener('showSidebar', (id) => {
       this.props.showSidebar()

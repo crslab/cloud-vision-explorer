@@ -9,8 +9,6 @@ module.exports = {
   devtool: 'inline-source-map',
 
   entry: [
-    'babel-polyfill',
-    'webpack/hot/only-dev-server',
     './src/javascripts/main.js'
   ],
 
@@ -20,57 +18,76 @@ module.exports = {
   },
 
   module: {
-    loaders: [
+    rules: [
       {
-        loaders: [ 'react-hot', 'babel' ],
+        test: /\.(js|jsx)?$/,
         exclude: /node_modules/,
-        include: __dirname,
-        test: /\.jsx?$/
+        use: [
+          'babel-loader'
+        ]
       },
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap!postcss!sass?sourceMap')
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              config: {
+                path: path.resolve(__dirname, './src/stylesheets')
+              }
+            }
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       },
       {
-        test: /\.scss$/,
+        test: /\.css$/,
         include: /node_modules\/react-toolbox/,
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap&modules&importLoaders=1!postcss!sass?sourceMap!toolbox')
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              modules: true, // default is false
+              sourceMap: true,
+              importLoaders: 1,
+              localIdentName: "[name]--[local]--[hash:base64:8]"
+            }
+          },
+        ]
       },
       {
         test: /\.svg$/,
-        loader: 'url?limit=10000'
+        loader: 'url-loader?limit=10000'
       }
     ]
   },
 
-  toolbox: { theme: 'src/stylesheets/toolbox-theme.scss' },
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
     new ExtractTextPlugin('[name].css'),
     new webpack.ProvidePlugin({
-      'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+      'fetch': 'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch'
     })
   ],
-
-  postcss: [
-    autoprefixer({
-      browsers: ['last 2 versions']
-    })
-  ],
-
-  sassLoader: {
-    includePaths: [path.resolve(__dirname, './src')]
-  },
 
   resolve: {
-    extensions: ['', '.js', '.scss', '.svg'],
-    modulesDirectories: ['src', 'node_modules']
+    extensions: ['.js', '.scss', '.svg'],
+    modules: ['src', 'node_modules']
   },
 
-  stats: {
-    children: false
-  }
 }

@@ -1,4 +1,5 @@
 import React    from 'react'
+import PropTypes from 'prop-types';
 import THREE    from 'three'
 import TWEEN    from 'tween.js'
 import _        from 'lodash'
@@ -55,21 +56,17 @@ const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
 
 const textureLoader = new THREE.TextureLoader()
 
-export default React.createClass({
+class RenderView extends React.Component{
   render() {
     return (
       <div ref={(c) => this._container = c} className="render-view"></div>
     )
-  },
-
-  propTypes: {
-    emitter: React.PropTypes.object.isRequired
-  },
+  }
 
   // Perhaps this is added for performance reasons?
   shouldComponentUpdate() {
     return false
-  },
+  }
 
   componentDidMount() {
     fetch(DATAPOINT_URL).then((res) => {
@@ -77,7 +74,7 @@ export default React.createClass({
     }).then((data) => {
       this._setupScene(data)
     })
-  },
+  }
 
   _setupScene({points, clusters}) {
     this.props.emitter.emit('imageCount', points.length)
@@ -630,4 +627,10 @@ export default React.createClass({
 
     animate()
   }
-})
+}
+
+RenderView.propTypes = {
+  emitter: PropTypes.object.isRequired
+}
+
+export default RenderView
