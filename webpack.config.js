@@ -9,11 +9,11 @@ module.exports = {
   devtool: 'inline-source-map',
 
   entry: [
-    './src/javascripts/main.js'
+    path.resolve(__dirname, path.join('src', 'javascripts', 'main.js'))
   ],
 
   output: {
-    path: path.resolve(__dirname, './build/dev'),
+    path: path.resolve(__dirname, path.join('build', 'dev')),
     filename: 'bundle.js'
   },
 
@@ -47,7 +47,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        include: /node_modules\/react-toolbox/,
+        include: path.resolve(__dirname, path.join('node_modules', 'react-toolbox')),
         use: [
           "style-loader",
           {
