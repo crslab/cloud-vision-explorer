@@ -7,6 +7,8 @@ import { Provider } from 'react-redux'
 import { HashRouter, Route } from 'react-router-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import { overrideComponentTypeChecker } from 'react-toolbox/lib'
+import importWebComponents from 'importWebComponents';
+importWebComponents();
 injectTapEventPlugin()
 
 overrideComponentTypeChecker((classType, reactElement) => {

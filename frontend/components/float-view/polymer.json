@@ -1,0 +1,12 @@
+{
+  "entrypoint": "float-view.html",
+  "sources": [
+    "data/**",
+    "lib/**"
+    ],
+  "lint": {
+    "rules": [
+      "polymer-3"
+    ]
+  }
+}

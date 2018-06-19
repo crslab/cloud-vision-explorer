@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "es2015", {
+        "modules": "commonjs"
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "transform-runtime", {
+        "helpers": true,
+        "polyfill": true,
+        "regenerator": false,
+        "moduleName": "babel-runtime"
+      }
+    ]
+  ]
+}

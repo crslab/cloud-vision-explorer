@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>dynamic-slider demo</title>
+    <script type="module" src="../src/index.js"></script>
+
+  </head>
+  <body>
+    <style>
+      .flex{
+        display: flex;
+      }
+
+      #ex1, #ex2, #ex3{
+        width: 200px;
+        height: 200px;
+        background-color: #d8d8d8;
+      }
+
+      #ex2__text{
+        padding-left: 20px;
+      }
+    </style>
+    <div class="vertical-section-container centered">
+      <h3>dynamic-slider demo: Static points input</h3>
+      <div id="ex1">
+        <dynamic-slider x1=0
+                        y1=0
+                        x2=199
+                        y2=199
+                        handle-radius="32"
+                        img-handle="images/Lenna_(test_image)_small.png"></dynamic-slider>
+        <dynamic-slider line-thickness="5"
+                        x1=100
+                        y1=0
+                        x2=200
+                        y2=100
+                        val="0.5"
+                        handle-radius="20"
+                        img-handle="images/Lenna_(test_image)_small_half.png"></dynamic-slider>
+        <dynamic-slider line-thickness="5"
+                        line-color="green"
+                        x1=0
+                        y1=100
+                        x2=100
+                        y2=0
+                        handle-radius="12"
+                        handle-color="red"></dynamic-slider>
+      </div>
+    </div>
+
+    <div class="vertical-section-container centered">
+      <script type="module" src="./demo2.js"></script>
+      <h3>dynamic-slider demo: Click points input</h3>
+      Click 2 points to create a slider.
+      <div>
+        <button id="ex2__btn" type="button">Reset</button>
+      </div>
+      <div>
+        <label>Enter input value for slider</label>
+        <input id="ex2__num" type="number" step=0.1 min="0.0" max="1.0">
+      </div>
+      <div class="flex">
+        <div id="ex2">
+          <svg width=200 height=200 style="position: absolute;">
+            <rect x="10" y="20" width="20" height="20" style="fill:rgb(0,0,0,0);stroke-width:2;stroke:rgb(0,0,0)" />
+            <rect x="150" y="55" width="20" height="20" style="fill:rgb(0,0,0,0);stroke-width:2;stroke:rgb(0,0,0)" />
+          </svg>
+        </div>
+        <div id="ex2__text">
+          <h4 id="ex2__text-start">event: slider-start</h4>
+          <h4 id="ex2__text-move">event: slider-move</h4>
+          <h4 id="ex2__text-stop">event: slider-stop</h4>
+          <h4>value (e.detail.proportion): <span id="ex2__text-value">test</span></h4>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
