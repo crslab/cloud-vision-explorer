@@ -217,6 +217,7 @@ class RenderView extends Component{
         blending:     THREE.AdditiveBlending,
         depthTest:    false,
         transparent:  true,
+        linewidth: 10,
         opacity: 0.3
       })
 
@@ -256,7 +257,7 @@ class RenderView extends Component{
       const startPoint = camera.position.clone()
 
       const endPointUnit = node.vec.clone().normalize()
-      const endPoint = node.vec.clone().add(endPointUnit.clone().multiplyScalar(5))
+      const endPoint = node.vec.clone().add(endPointUnit.clone().multiplyScalar(100))
 
       const startPointNormalized = startPoint.clone().normalize()
       const endPointNormalized = endPoint.clone().normalize()
@@ -336,6 +337,96 @@ class RenderView extends Component{
         return Promise.resolve()
       })
     }
+    const trackTwoNodes = (node1,node2) => {
+      // My attempt at 2 node logic
+
+      const nodeGroup = clusters[node1.g]
+      const startPoint = camera.position.clone()
+      const furtherOfTwoPoints = Math.max(node1.vec.clone().length(),node2.vec.clone().length())
+      const midPoint = node1.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints).add(node2.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints)) //probably doesn't work
+      //const midArc = midPoint.clone().normalize().multiplyScalar(furtherOfTwoPoints)
+      const endPoint = midPoint.clone()
+
+      const startPointNormalized = startPoint.clone().normalize()
+      const endPointNormalized = endPoint.clone().normalize()
+      const cross = endPointNormalized.clone().cross(startPointNormalized).normalize()
+
+      const angle = startPoint.angleTo(endPoint)
+
+      const startPointDistance = startPoint.length()
+      const endPointDistance = furtherOfTwoPoints
+
+      // End of my attempt
+
+      const zoomOutDistance = 2000
+
+      let totalAnimTime = angle * 2000
+      totalAnimTime = Math.max(totalAnimTime, 2000)
+
+      const otherGroupsFadeInTime = 1000
+      const groupFocusTime = 1000
+
+      const waitTime = totalAnimTime - otherGroupsFadeInTime - groupFocusTime
+
+      return Promise.resolve()
+      // Make other clusters look dark
+      .then(() => {
+        currentlyTrackingNode = node1
+
+        // Rotate around
+        return Promise.all([
+          Promise.resolve()
+          .then(() => wait(waitTime/3))
+          .then(() => {
+            return (currentlyZoomedCluster !== null ? tween({
+              f: 0.3
+            }, {
+              f: 1.0
+            }, otherGroupsFadeInTime, groupOpacFunction(points, geometry, clusters, currentlyZoomedCluster)) : wait(otherGroupsFadeInTime))
+          })
+          .then(() => wait((waitTime/3)*0.5))
+          .then(() => {
+            return tween({
+              f: 1.0
+            }, {
+              f: 0.3
+            }, groupFocusTime, groupOpacFunction(points, geometry, clusters, nodeGroup))
+          }),
+          tween({
+            f: 0
+          }, {
+            f: 1
+          }, totalAnimTime, function () {
+
+            const qF = TWEEN.Easing.Quadratic.InOut(this.f)
+            const qD = startPointDistance + (endPointDistance - startPointDistance) * qF
+
+            const interpolatedPosition = startPoint.clone().applyAxisAngle(cross, -angle * qF)
+
+            let bouncingF = this.f
+            if (bouncingF > 0.5) {
+              bouncingF = TWEEN.Easing.Sinusoidal.InOut((1.0 - bouncingF) * 2)
+            }
+            else {
+              bouncingF = TWEEN.Easing.Quadratic.InOut(this.f * 2)
+            }
+
+            const distance = qD + zoomOutDistance * bouncingF * angle * 0.2
+
+            interpolatedPosition.normalize().multiplyScalar(distance)
+
+            camera.position.copy(interpolatedPosition)
+            cameraTargetPosition.copy(camera.position)
+          }, TWEEN.Easing.Linear.None)
+        ])
+      })
+      .then(() => {
+        currentlyZoomedCluster = nodeGroup
+        currentlyTrackingNode = null
+
+        return Promise.resolve()
+      })
+    }
 
     this.props.emitter.addListener('zoomToImage', (id, openSideBar) => {
       // Preload the image results JSON file so it'll show instantly
@@ -343,7 +434,8 @@ class RenderView extends Component{
       preloadImage(getVisionJsonURL(id))
 
       cameraAnimationQueue = cameraAnimationQueue
-        .then(() => trackNode(_.find(points, (p) => p.i === id)))
+        //.then(() => trackNode(_.find(points, (p) => p.i === id)))
+        .then(() => trackTwoNodes(_.find(points, (p) => p.i === 'ppt1_001'),_.find(points, (p) => p.i === 'ppt1_002')))
         .then(() => {
           if (openSideBar) {
             this.props.emitter.emit('showSidebar', id)
@@ -385,7 +477,7 @@ class RenderView extends Component{
 
       if (!currentlyTrackingNode) {
         points.forEach((n) => {
-          if (n.vec.distanceToSquared(camera.position) < Math.pow(denseFactor * 0.05, 2)) {
+          if (n.vec.distanceToSquared(camera.position) < Math.pow(denseFactor * 0.50, 2)) {
             listOfNearbyVectors.push(n)
           }
         })
