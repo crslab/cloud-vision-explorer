@@ -29,9 +29,6 @@ class SidebarTabs extends Tabs {
     const { headers, contents } = this.parseChildren()
     if(this.props.className) { className += ` ${this.props.className}` }
 
-    console.log(headers)
-    console.log(contents)
-
     return (
       <div id='tabs' data-react-toolbox='tabs' className={className}>
         {this.renderContents(contents)}
@@ -48,7 +45,6 @@ class SidebarTabs extends Tabs {
 class GraphTab extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props)
   }
 
   static get propTypes() {
@@ -97,7 +93,6 @@ class GraphTab extends Component {
 
   render() {
     const { vision } = this.props
-    console.log(vision)
     const classForPerson = (idx) => {
       const classes = ['primary', 'secondary', 'third']
       return `face-detection-person ${classes[idx % classes.length]}`

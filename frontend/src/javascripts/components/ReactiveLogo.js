@@ -8,5 +8,5 @@ const style = {
 }
 
 export const ReactiveLogo = () => <a href="http://reactive.co.jp" target="_new">
-  <img src="images/ReactiveLogoFull" style={style} />
+  <img src="/images/ReactiveLogoFull.svg" style={style} />
 </a>

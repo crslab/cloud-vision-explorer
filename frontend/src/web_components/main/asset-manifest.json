@@ -1,0 +1,14 @@
+{
+  "dynamic-slider.js": "dynamic-slider.bundle.js",
+  "dynamic-slider.js.map": "dynamic-slider.bundle.js.map",
+  "float-view.js": "float-view.bundle.js",
+  "float-view.js.map": "float-view.bundle.js.map",
+  "runtime.js": "runtime.bundle.js",
+  "runtime.js.map": "runtime.bundle.js.map",
+  "vendors~dynamic-slider.js": "vendors~dynamic-slider.bundle.js",
+  "vendors~dynamic-slider.js.map": "vendors~dynamic-slider.bundle.js.map",
+  "vendors~dynamic-slider~float-view.js": "vendors~dynamic-slider~float-view.bundle.js",
+  "vendors~dynamic-slider~float-view.js.map": "vendors~dynamic-slider~float-view.bundle.js.map",
+  "vendors~float-view.js": "vendors~float-view.bundle.js",
+  "vendors~float-view.js.map": "vendors~float-view.bundle.js.map"
+}

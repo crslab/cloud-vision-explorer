@@ -7,6 +7,8 @@ import { Provider } from 'react-redux'
 import { HashRouter, Route } from 'react-router-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import { overrideComponentTypeChecker } from 'react-toolbox/lib'
+import importWebComponents from 'importWebComponents';
+importWebComponents();
 injectTapEventPlugin()
 
 overrideComponentTypeChecker((classType, reactElement) => {
@@ -21,8 +23,6 @@ overrideComponentTypeChecker((classType, reactElement) => {
 import configureStore from './store/configureStore'
 import EntrancePage from './components/EntrancePage'
 import FrontPage from './components/FrontPage'
-
-console.log(FrontPage)
 
 const store = configureStore()
 
