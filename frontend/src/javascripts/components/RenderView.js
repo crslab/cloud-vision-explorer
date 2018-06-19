@@ -87,12 +87,12 @@ class RenderView extends Component{
     const raycaster = new THREE.Raycaster()
 
     // Increase the default mouseover detection radius of points
-    raycaster.params.Points.threshold = denseFactor / 1000
+    raycaster.params.Points.threshold = denseFactor / 100 // was 1000
 
     // Used for mousepicking
     const mouse = new THREE.Vector2()
 
-    const lookAtTarget = new THREE.Vector3()
+    let lookAtTarget = new THREE.Vector3()
     const cameraTargetPosition = camera.position.clone()
 
     // Do some post-processing for points
@@ -250,6 +250,9 @@ class RenderView extends Component{
 
 
     const trackNode = (node) => {
+      // Reset lookAtTarget to (0,0,0) when only one image is selected
+      lookAtTarget = new THREE.Vector3()
+      
       const nodeGroup = clusters[node.g]
 
       // We only want to reset the panning, so still save the camera position
@@ -257,7 +260,7 @@ class RenderView extends Component{
       const startPoint = camera.position.clone()
 
       const endPointUnit = node.vec.clone().normalize()
-      const endPoint = node.vec.clone().add(endPointUnit.clone().multiplyScalar(100))
+      const endPoint = node.vec.clone().add(endPointUnit.clone().multiplyScalar(50))
 
       const startPointNormalized = startPoint.clone().normalize()
       const endPointNormalized = endPoint.clone().normalize()
@@ -338,15 +341,35 @@ class RenderView extends Component{
       })
     }
     const trackTwoNodes = (node1,node2) => {
-      // My attempt at 2 node logic
 
       const nodeGroup = clusters[node1.g]
       const startPoint = camera.position.clone()
-      const furtherOfTwoPoints = Math.max(node1.vec.clone().length(),node2.vec.clone().length())
-      const midPoint = node1.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints).add(node2.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints)) //probably doesn't work
-      //const midArc = midPoint.clone().normalize().multiplyScalar(furtherOfTwoPoints)
-      const endPoint = midPoint.clone()
-
+      
+      // Set up variables for looking at the midpoint of the line between two icons
+      const lineDir  = node2.vec.clone().sub(node1.vec)
+      const midPoint = node1.vec.clone().multiplyScalar(0.5).add(node2.vec.clone().multiplyScalar(0.5))
+      const lineLen  = lineDir.length()
+      
+      // Camera is shifted from the midpoint in a direction perpendicular to the two nodes' position vectors
+      const crossNodes = (node2.vec.clone().cross(node1.vec.clone())).normalize()
+      const endPoint   = midPoint.clone().add(crossNodes.clone().multiplyScalar(lineLen/0.7)) // tan35 computation shortcut for now
+      
+      console.log("Node 1: "     + node1.vec.x, node1.vec.y, node1.vec.z)
+      console.log("Node 2: "     + node2.vec.x, node2.vec.y, node2.vec.z)
+      console.log("Midpoint: "   + midPoint.x, midPoint.y, midPoint.z)
+      console.log("Crossnodes: " + crossNodes.x, crossNodes.y, crossNodes.z)
+      console.log("Endpoint: "   + endPoint.x, endPoint.y, endPoint.z)
+      console.log("Line len: "   + lineLen)
+      
+      // Weicong: My attempt at 2 node logic
+      
+      // const furtherOfTwoPoints = Math.max(node1.vec.clone().length(),node2.vec.clone().length())
+      // const midPoint = node1.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints).add(node2.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints)) //probably doesn't work
+      // //const midArc = midPoint.clone().normalize().multiplyScalar(furtherOfTwoPoints)
+      // const endPoint = midPoint.clone()
+      
+      // End of my attempt
+      
       const startPointNormalized = startPoint.clone().normalize()
       const endPointNormalized = endPoint.clone().normalize()
       const cross = endPointNormalized.clone().cross(startPointNormalized).normalize()
@@ -354,9 +377,7 @@ class RenderView extends Component{
       const angle = startPoint.angleTo(endPoint)
 
       const startPointDistance = startPoint.length()
-      const endPointDistance = furtherOfTwoPoints
-
-      // End of my attempt
+      const endPointDistance = endPoint.length()
 
       const zoomOutDistance = 2000
 
@@ -368,6 +389,13 @@ class RenderView extends Component{
 
       const waitTime = totalAnimTime - otherGroupsFadeInTime - groupFocusTime
 
+      
+      // trying to set the lookat vector to midpoint, but not sure: 
+      // - whether this code belongs here (lookat doesn't seem to get updated unless clicked twice)
+      // - whether resetting lookAtTarget to (0,0,0) in trackNode is correct
+      // - whether camera.up should be reset here as well
+      lookAtTarget = midPoint
+        
       return Promise.resolve()
       // Make other clusters look dark
       .then(() => {
@@ -417,7 +445,7 @@ class RenderView extends Component{
 
             camera.position.copy(interpolatedPosition)
             cameraTargetPosition.copy(camera.position)
-          }, TWEEN.Easing.Linear.None)
+          }, TWEEN.Easing.Linear.None),
         ])
       })
       .then(() => {
@@ -434,8 +462,17 @@ class RenderView extends Component{
       preloadImage(getVisionJsonURL(id))
 
       cameraAnimationQueue = cameraAnimationQueue
-        //.then(() => trackNode(_.find(points, (p) => p.i === id)))
-        .then(() => trackTwoNodes(_.find(points, (p) => p.i === 'ppt1_001'),_.find(points, (p) => p.i === 'ppt1_002')))
+        
+        .then(() => {
+            if (id === 'ppt1_002'){
+                let node1 = _.find(points, (p) => p.i === 'ppt1_010') //ppt1_001
+                let node2 = _.find(points, (p) => p.i === 'ppt3_035') //ppt1_002
+                return trackTwoNodes(node1, node2)
+            }
+            else 
+                return trackNode(_.find(points, (p) => p.i === id))
+            
+        }) 
         .then(() => {
           if (openSideBar) {
             this.props.emitter.emit('showSidebar', id)
@@ -555,7 +592,7 @@ class RenderView extends Component{
             .then((sprite) => {
               nearbyVector.plane = sprite
               nearbyVector.plane.position.copy(nearbyVector.vec)
-              nearbyVector.plane.scale.multiplyScalar(denseFactor / 500)
+              nearbyVector.plane.scale.multiplyScalar(denseFactor / 50) // was 500
 
               group.add(nearbyVector.plane)
             })
