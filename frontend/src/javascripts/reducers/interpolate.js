@@ -1,4 +1,4 @@
-import { staticFileUrl, VaeImgApi, VaeHistogramApi } from 'api/api.js';
+import { staticFileUrl, VaeImgApi, VaeHistogramApi } from 'javascripts/api/api.js';
 
 // Action types
 export const types = {

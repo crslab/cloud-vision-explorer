@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@webcomponents/webcomponentsjs": "^2.0.2",
+    "cross-fetch": "^2.2.1",
     "exports-loader": "^0.7.0",
     "fbemitter": "^2.1.1",
     "gulp-eslint": "^4.0.2",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-react-constant-elements": "^6.23.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",

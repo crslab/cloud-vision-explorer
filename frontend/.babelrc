@@ -2,6 +2,7 @@
    "presets": [ "env", "react" ],
    "plugins": [
       "transform-es2015-modules-commonjs",
-      "transform-react-constant-elements"
+      "transform-react-constant-elements",
+      "transform-object-rest-spread"
    ]
 }
