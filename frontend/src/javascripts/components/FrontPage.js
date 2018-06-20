@@ -10,7 +10,6 @@ import Sidebar from './Sidebar'
 import * as sidebarActionCreators from '../actions/sidebar'
 import 'stylesheets/FrontPage'
 import {EventEmitter} from 'fbemitter'
-import { ReactiveLogo } from './ReactiveLogo'
 import BrowserChecker from './BrowserChecker'
 
 const emitter = new EventEmitter()
@@ -18,7 +17,7 @@ const emitter = new EventEmitter()
 const style = {
   infoLink: {
     position: 'absolute',
-    top: '2vh',
+    top: '5vh', //height of logos on left panel
     left: '2vh',
     width: '20vh',
     zIndex: 100
@@ -52,7 +51,6 @@ class FrontPage extends Component {
         />
         <Sidebar sidebar={sidebar} emitter={emitter} {...sidebarBounds} />
         <RenderView emitter={emitter} />
-        <ReactiveLogo />
       </div>
     )
   }

@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Ripple from 'react-toolbox/lib/ripple'
 import 'stylesheets/EntrancePage'
-import { ReactiveLogo } from './ReactiveLogo'
 import BrowserChecker from './BrowserChecker'
 
 export default class EntrancePage extends Component {
@@ -13,8 +12,6 @@ export default class EntrancePage extends Component {
     return (
       <div className="entrance">
         <div className="poweredby">
-          <img className="gcp-logo" src="/images/Vision-API.png" /><br />
-          <h1>Cloud Vision API<br/>Demo</h1>
         </div>
         <div>
           <RippleLink className="launch-button" to="/galaxy">LAUNCH</RippleLink>
@@ -25,7 +22,6 @@ export default class EntrancePage extends Component {
             </ul>
           </nav>
         </div>
-        <ReactiveLogo />
       </div>
     )
   }
