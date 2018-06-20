@@ -445,12 +445,46 @@ class RenderView extends Component{
 
             camera.position.copy(interpolatedPosition)
             cameraTargetPosition.copy(camera.position)
-          }, TWEEN.Easing.Linear.None),
+          }, TWEEN.Easing.Exponential.Out),
         ])
       })
       .then(() => {
         currentlyZoomedCluster = nodeGroup
         currentlyTrackingNode = null
+        console.log("SHOW COORDS")
+        var canvasss = renderer.domElement.getBoundingClientRect();
+
+        var vector1 = node1.vec.clone()
+        // map to normalized device coordinate (NDC) space
+        vector1.project( camera );
+
+        // map to 2D screen space
+        vector1.x = Math.round( (   vector1.x + 1 ) * canvasss.width  / 2 );
+        vector1.y = Math.round( ( - vector1.y + 1 ) * canvasss.height / 2 );
+        vector1.z = 0;
+
+        var vector2 = node2.vec.clone()
+        // map to normalized device coordinate (NDC) space
+        vector2.project( camera );
+
+        // map to 2D screen space
+        vector2.x = Math.round( (   vector2.x + 1 ) * canvasss.width  / 2 );
+        vector2.y = Math.round( ( - vector2.y + 1 ) * canvasss.height / 2 );
+        vector2.z = 0;
+
+        console.log("NODE1: ", vector1.x, vector1.y, vector1.z, node1.i)
+        console.log("NODE2: ", vector2.x, vector2.y, vector2.z, node2.i)
+
+        var evt = new CustomEvent('interpolation-data-ready', { 
+          bubbles: true,
+          detail: {
+            v1: vector1,
+            v2: vector2,
+            node1name: node1.i,
+            node2name: node2.i   
+          }
+        });
+        renderer.domElement.dispatchEvent(evt);
 
         return Promise.resolve()
       })
