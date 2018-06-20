@@ -1,4 +1,3 @@
-'use strict'
 import 'babel-polyfill'
 import 'stylesheets/main'
 import React from 'react'
@@ -7,8 +6,10 @@ import { Provider } from 'react-redux'
 import { HashRouter, Route } from 'react-router-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import { overrideComponentTypeChecker } from 'react-toolbox/lib'
-import importWebComponents from 'importWebComponents';
-importWebComponents();
+import importWebComponents from 'importWebComponents'
+
+
+importWebComponents()
 injectTapEventPlugin()
 
 overrideComponentTypeChecker((classType, reactElement) => {

@@ -5,6 +5,7 @@ import TWEEN    from 'tween.js'
 import _        from 'lodash'
 import Shaders  from '../misc/Shaders.js'
 import Random   from 'random-js'
+import dse from 'javascripts/misc/dynamicSliderEvents.js';
 
 import { getVisionJsonURL,
          preloadImage }               from '../misc/Util.js'
@@ -16,7 +17,8 @@ import { gcsBucketName,
          gcsDatapointPath }           from '../config.js'
 
 // Load some webpack-incompatible modules
-require('../misc/FreeLookControls.js')(THREE)
+import FreeLookControls from '../misc/FreeLookControls.js';
+FreeLookControls(THREE)
 
 // Styles
 import 'stylesheets/RenderView'
@@ -59,7 +61,18 @@ const textureLoader = new THREE.TextureLoader()
 class RenderView extends Component{
   render() {
     return (
-      <div ref={(c) => this._container = c} className="render-view"></div>
+      <div id="render-view__container">
+        <div id="render-view__slider-overlay">
+          <dynamic-slider id="render-view__slider"
+                          line-color="white"
+                          handle-color="white"
+                          x1="536"
+                          y1="344"
+                          x2="888"
+                          y2="377"></dynamic-slider>
+        </div>
+        <div ref={(c) => this._container = c} className="render-view"></div>
+      </div>
     )
   }
 
@@ -69,6 +82,19 @@ class RenderView extends Component{
   }
 
   componentDidMount() {
+    document.getElementById("render-view__container").addEventListener("interpolation-data-ready", e => {
+      console.log(e);
+    })
+    document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
+      console.log("START")
+    });
+    document.getElementById("render-view__slider").addEventListener(dse.sliderMove, e => {
+      console.log("MOVING")
+      console.log(e.detail)
+    });
+    document.getElementById("render-view__slider").addEventListener(dse.sliderStop, e => {
+      console.log("STOP")
+    });
     fetch(DATAPOINT_URL).then((res) => {
       return res.json()
     }).then((data) => {
@@ -252,7 +278,7 @@ class RenderView extends Component{
     const trackNode = (node) => {
       // Reset lookAtTarget to (0,0,0) when only one image is selected
       lookAtTarget = new THREE.Vector3()
-      
+
       const nodeGroup = clusters[node.g]
 
       // We only want to reset the panning, so still save the camera position
@@ -344,32 +370,32 @@ class RenderView extends Component{
 
       const nodeGroup = clusters[node1.g]
       const startPoint = camera.position.clone()
-      
+
       // Set up variables for looking at the midpoint of the line between two icons
       const lineDir  = node2.vec.clone().sub(node1.vec)
       const midPoint = node1.vec.clone().multiplyScalar(0.5).add(node2.vec.clone().multiplyScalar(0.5))
       const lineLen  = lineDir.length()
-      
+
       // Camera is shifted from the midpoint in a direction perpendicular to the two nodes' position vectors
       const crossNodes = (node2.vec.clone().cross(node1.vec.clone())).normalize()
       const endPoint   = midPoint.clone().add(crossNodes.clone().multiplyScalar(lineLen/0.7)) // tan35 computation shortcut for now
-      
+
       console.log("Node 1: "     + node1.vec.x, node1.vec.y, node1.vec.z)
       console.log("Node 2: "     + node2.vec.x, node2.vec.y, node2.vec.z)
       console.log("Midpoint: "   + midPoint.x, midPoint.y, midPoint.z)
       console.log("Crossnodes: " + crossNodes.x, crossNodes.y, crossNodes.z)
       console.log("Endpoint: "   + endPoint.x, endPoint.y, endPoint.z)
       console.log("Line len: "   + lineLen)
-      
+
       // Weicong: My attempt at 2 node logic
-      
+
       // const furtherOfTwoPoints = Math.max(node1.vec.clone().length(),node2.vec.clone().length())
       // const midPoint = node1.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints).add(node2.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints)) //probably doesn't work
       // //const midArc = midPoint.clone().normalize().multiplyScalar(furtherOfTwoPoints)
       // const endPoint = midPoint.clone()
-      
+
       // End of my attempt
-      
+
       const startPointNormalized = startPoint.clone().normalize()
       const endPointNormalized = endPoint.clone().normalize()
       const cross = endPointNormalized.clone().cross(startPointNormalized).normalize()
@@ -389,13 +415,13 @@ class RenderView extends Component{
 
       const waitTime = totalAnimTime - otherGroupsFadeInTime - groupFocusTime
 
-      
-      // trying to set the lookat vector to midpoint, but not sure: 
+
+      // trying to set the lookat vector to midpoint, but not sure:
       // - whether this code belongs here (lookat doesn't seem to get updated unless clicked twice)
       // - whether resetting lookAtTarget to (0,0,0) in trackNode is correct
       // - whether camera.up should be reset here as well
       lookAtTarget = midPoint
-        
+
       return Promise.resolve()
       // Make other clusters look dark
       .then(() => {
@@ -475,13 +501,13 @@ class RenderView extends Component{
         console.log("NODE1: ", vector1.x, vector1.y, vector1.z, node1.i)
         console.log("NODE2: ", vector2.x, vector2.y, vector2.z, node2.i)
 
-        var evt = new CustomEvent('interpolation-data-ready', { 
+        var evt = new CustomEvent('interpolation-data-ready', {
           bubbles: true,
           detail: {
             v1: vector1,
             v2: vector2,
             node1name: node1.i,
-            node2name: node2.i   
+            node2name: node2.i
           }
         });
         renderer.domElement.dispatchEvent(evt);
@@ -496,17 +522,17 @@ class RenderView extends Component{
       preloadImage(getVisionJsonURL(id))
 
       cameraAnimationQueue = cameraAnimationQueue
-        
+
         .then(() => {
             if (id === 'ppt1_002'){
                 let node1 = _.find(points, (p) => p.i === 'ppt1_010') //ppt1_001
                 let node2 = _.find(points, (p) => p.i === 'ppt3_035') //ppt1_002
                 return trackTwoNodes(node1, node2)
             }
-            else 
+            else
                 return trackNode(_.find(points, (p) => p.i === id))
-            
-        }) 
+
+        })
         .then(() => {
           if (openSideBar) {
             this.props.emitter.emit('showSidebar', id)

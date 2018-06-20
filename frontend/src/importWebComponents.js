@@ -27,6 +27,7 @@ const importWebComponents = () => {
     for (let path of importPaths) {
       // Trick webpack into thinking this is require-ing with a string rather than
       // a variable name
+			console.log(path);
       require(`${path}`);
     }
   };

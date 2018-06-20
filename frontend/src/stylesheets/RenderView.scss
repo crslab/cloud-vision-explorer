@@ -1,1 +1,13 @@
+#render-view__container{
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}
+
+#render-view__slider-overlay{
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .render-view {}

@@ -1,6 +1,6 @@
 import _        from 'lodash'
 
-module.exports = (THREE) => {
+export default function FreeLookControls(THREE) {
   THREE.FreeLookControls = function (object, element) {
     const PI_2 = Math.PI / 2
     const mouseQuat = {
