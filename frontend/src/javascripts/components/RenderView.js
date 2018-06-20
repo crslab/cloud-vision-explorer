@@ -124,7 +124,6 @@ class RenderView extends Component{
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.clickState.stage === stages.SELECTED_2ND) {
-      console.log(this.clickState.stage, stages.SELECTED_2ND)
       this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId, false)
     }
     if (this.props.state.interpolate.isShowSlider) {
