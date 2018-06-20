@@ -547,6 +547,26 @@ class RenderView extends Component{
 
     this.props.emitter.addListener('reset', () => trackNode())
     
+
+    this.props.emitter.addListener('interpolateNow', (n1, n2, openSideBar) => {
+      // Preload the image results JSON file so it'll show instantly
+      // when the sidebar is opened
+
+      cameraAnimationQueue = cameraAnimationQueue
+
+        .then(() => {
+          let node1 = _.find(points, (p) => p.i === n1) //ppt1_001
+          let node2 = _.find(points, (p) => p.i === n2) //ppt1_002
+          return trackTwoNodes(node1, node2)
+        })
+        .then(() => {
+          if (openSideBar) {
+            this.props.emitter.emit('showSidebar', 'ppt1_001') // temp hardcode
+          }
+        })
+    })
+
+
     const renderer = new THREE.WebGLRenderer()
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(window.innerWidth, window.innerHeight)
