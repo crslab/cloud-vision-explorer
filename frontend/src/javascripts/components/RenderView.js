@@ -88,6 +88,7 @@ class RenderView extends Component{
       console.log(e);
     })
     document.getElementById("render-view__reset-btn").addEventListener("click", e => {
+      this.props.emitter.emit('reset')
       console.log("click");
     })
     document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
@@ -108,6 +109,7 @@ class RenderView extends Component{
   }
 
   _setupScene({points, clusters}) {
+
     this.props.emitter.emit('imageCount', points.length)
 
     const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, denseFactor * 10)
@@ -123,7 +125,7 @@ class RenderView extends Component{
     // Used for mousepicking
     const mouse = new THREE.Vector2()
 
-    let lookAtTarget = new THREE.Vector3()
+    const lookAtTarget = new THREE.Vector3()
     const cameraTargetPosition = camera.position.clone()
 
     // Do some post-processing for points
@@ -279,19 +281,20 @@ class RenderView extends Component{
 
     const controls = new THREE.FreeLookControls(camera, this._container)
 
-
     const trackNode = (node) => {
-      // Reset lookAtTarget to (0,0,0) when only one image is selected
-      lookAtTarget = new THREE.Vector3()
 
-      const nodeGroup = clusters[node.g]
+      // Reset lookAtTarget to (0,0,0) when only one image is selected
+      lookAtTarget.set(0,0,0)
+      const resetPos = new THREE.Vector3(0, 0, denseFactor * 1.2)
+
+      const nodeGroup = clusters[((node || {}).g || 0)]
 
       // We only want to reset the panning, so still save the camera position
       // as that needs to lerp to its target instead
       const startPoint = camera.position.clone()
 
-      const endPointUnit = node.vec.clone().normalize()
-      const endPoint = node.vec.clone().add(endPointUnit.clone().multiplyScalar(50))
+      const endPointUnit = ((node || {}).vec || resetPos).clone().normalize()
+      const endPoint = ((node || {}).vec || resetPos).clone().add(endPointUnit.clone().multiplyScalar(50))
 
       const startPointNormalized = startPoint.clone().normalize()
       const endPointNormalized = endPoint.clone().normalize()
@@ -315,7 +318,7 @@ class RenderView extends Component{
       return Promise.resolve()
       // Make other clusters look dark
       .then(() => {
-        currentlyTrackingNode = node
+        currentlyTrackingNode = node || true
 
         // Rotate around
         return Promise.all([
@@ -371,6 +374,7 @@ class RenderView extends Component{
         return Promise.resolve()
       })
     }
+    
     const trackTwoNodes = (node1,node2) => {
 
       const nodeGroup = clusters[node1.g]
@@ -392,15 +396,6 @@ class RenderView extends Component{
       console.log("Endpoint: "   + endPoint.x, endPoint.y, endPoint.z)
       console.log("Line len: "   + lineLen)
 
-      // Weicong: My attempt at 2 node logic
-
-      // const furtherOfTwoPoints = Math.max(node1.vec.clone().length(),node2.vec.clone().length())
-      // const midPoint = node1.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints).add(node2.vec.clone().normalize().multiplyScalar(0.5*furtherOfTwoPoints)) //probably doesn't work
-      // //const midArc = midPoint.clone().normalize().multiplyScalar(furtherOfTwoPoints)
-      // const endPoint = midPoint.clone()
-
-      // End of my attempt
-
       const startPointNormalized = startPoint.clone().normalize()
       const endPointNormalized = endPoint.clone().normalize()
       const cross = endPointNormalized.clone().cross(startPointNormalized).normalize()
@@ -412,7 +407,7 @@ class RenderView extends Component{
 
       const zoomOutDistance = 2000
 
-      let totalAnimTime = angle * 2000
+      let totalAnimTime = angle * 4000
       totalAnimTime = Math.max(totalAnimTime, 2000)
 
       const otherGroupsFadeInTime = 1000
@@ -425,7 +420,7 @@ class RenderView extends Component{
       // - whether this code belongs here (lookat doesn't seem to get updated unless clicked twice)
       // - whether resetting lookAtTarget to (0,0,0) in trackNode is correct
       // - whether camera.up should be reset here as well
-      lookAtTarget = midPoint
+      lookAtTarget.copy(midPoint)
 
       return Promise.resolve()
       // Make other clusters look dark
@@ -534,7 +529,12 @@ class RenderView extends Component{
                 let node2 = _.find(points, (p) => p.i === 'ppt3_035') //ppt1_002
                 return trackTwoNodes(node1, node2)
             }
-            else
+            else if (id === 'ppt1_004'){
+                let node1 = _.find(points, (p) => p.i === 'ppt1_001') //ppt1_001
+                let node2 = _.find(points, (p) => p.i === 'ppt1_003') //ppt1_002
+                return trackTwoNodes(node1, node2)
+            }
+            else 
                 return trackNode(_.find(points, (p) => p.i === id))
 
         })
@@ -545,7 +545,8 @@ class RenderView extends Component{
         })
     })
 
-
+    this.props.emitter.addListener('reset', () => trackNode())
+    
     const renderer = new THREE.WebGLRenderer()
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(window.innerWidth, window.innerHeight)
@@ -557,7 +558,10 @@ class RenderView extends Component{
     }, false)
 
     const clock = new THREE.Clock()
-
+    
+    
+    
+    
     window.addEventListener('resize', () => {
 
       camera.aspect = window.innerWidth / window.innerHeight
