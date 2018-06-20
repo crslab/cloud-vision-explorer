@@ -1,9 +1,11 @@
 import { staticFileUrl, VaeImgApi, VaeHistogramApi } from 'javascripts/api/api.js';
+import data from 'data/artdataWithImgSize.json'
 
 // Action types
 export const types = {
   ADD_START: "ADD_START",
   ADD_END: "ADD_END",
+  PIN_POSITIONS: "PIN_POSITIONS",
   INTERPOLATE_REQ: "INTERPOLATE_REQ",
   INTERPOLATE_RESP: "INTERPOLATE_RESP",
   HISTOGARM_REQ: "HISTOGRAM_REQ",
@@ -14,41 +16,39 @@ export const types = {
 
 // Action creators
 export const actions = {
-  addStartingPoint: (data, position) => ({
+  addStartingPoint: id => ({
     type: types.ADD_START,
-    data,
-    position
+    id
   }),
-  addEndingPoint: (data, position) => ({
+  addEndingPoint: id => ({
     type: types.ADD_END,
-    data,
-    position
+    id
   }),
-  requestInterpolation: (contextId, z, weight) => ({
+  pinPoints: (pt1, pt2) => ({
+    type: types.PIN_POSITIONS,
+    pt1,
+    pt2
+  }),
+  requestInterpolation: (z, weight) => ({
     type: types.INTERPOLATE_REQ,
-    contextId,
     z,
     weight
   }),
-  receivedInterpolation: (contextId, response) => ({
+  receivedInterpolation: response => ({
     type: types.INTERPOLATE_RESP,
-    contextId,
     response
   }),
-  requestHistogram: (contextId, z, weight) => ({
+  requestHistogram: (z, weight) => ({
     type: types.HISTOGARM_REQ,
-    contextId,
     z,
     weight
   }),
-  receivedHistogram: (contextId, response) => ({
+  receivedHistogram: response => ({
     type: types.HISTOGARM_RESP,
-    contextId,
     response
   }),
-  apiError: (contextId, error) => ({
+  apiError: error => ({
     type: types.API_ERR,
-    contextId,
     error
   }),
   reset: () => ({
@@ -63,130 +63,110 @@ const affineZArray = (z1Array, z2Array, weight) => z1Array.map((z1, i) => (weigh
 // have 3 states: requested, received, and error thrown. If this action creator
 // returns a plain JSON object, then you can't have multiple dependent state changes.
 export const asyncActions = {
-  requestInterpolate: (contextId, weight) => (dispatch, getState) => {
-    let context = getState().interpolate.contexts.find(e => e.id === contextId);
-    let z = affineZArray(context.pt1.z, context.pt2.z, weight);
+  requestInterpolate: weight => (dispatch, getState) => {
+    let z = affineZArray(getState().pt1.z, getState().pt2.z, weight);
     let data = JSON.stringify({z});
-    dispatch(actions.requestInterpolation(contextId, z, weight));
+    dispatch(actions.requestInterpolation(z, weight));
     return VaeImgApi.post(data)
       .then(response => {
-        dispatch(actions.receivedInterpolation(contextId, response));
-        dispatch(actions.requestHistogram(contextId, z, weight));
+        dispatch(actions.receivedInterpolation(response));
+        dispatch(actions.requestHistogram(z, weight));
         return VaeHistogramApi.post(data);
       })
-      .then(response => dispatch(actions.receivedHistogram(contextId, response)))
-      .catch(error => dispatch(actions.apiError(contextId, error)));
+      .then(response => dispatch(actions.receivedHistogram(response)))
+      .catch(error => dispatch(actions.apiError(error)));
   }
 };
 
-
-// Initial state
 /**
- * Context object shape:
- *  {
- *    id: inititalId,
- *    pt1: {
- *      imgId: 0,
- *      x: 0,
- *      y: 0,
- *      z: [],
- *      z_2d: []
- *    },
- *    pt2: {
- *      imgId: 0,
- *      x: 0,
- *      y: 0
- *      z: [],
- *      z_2d: []
- *    },
- *    interpolate: {
- *      z: [],
- *      weight: 0.0,
- *      status: statuses.OK,
- *      response: {},
- *      resultUrl: ""
- *    },
- *    histogram: {
- *      z: [],
- *      weight: 0.0,
- *      status: statuses.OK,
- *      response: {},
- *      val: []
- *    }
- *  }
- */
+  State Shape:
+  {
+     pt1: {
+       imgId: 0,
+       x: 0,
+       y: 0,
+       z: [],
+     },
+     pt2: {
+       imgId: 0,
+       x: 0,
+       y: 0
+       z: [],
+     },
+     interpolate: {
+       z: [],
+       weight: 0.0,
+       status: statuses.OK,
+       response: {},
+       resultUrl: ""
+     },
+     histogram: {
+       z: [],
+       weight: 0.0,
+       status: statuses.OK,
+       response: {},
+       val: []
+     }
+   }
+*/
 export const statuses = {
   REQ: "REQ",
   OK: "OK",
   ERR: "ERR"
 };
-const initialId = Date.now();
 const initialState = {
-  contexts: [],
-  currentContext: {
-    id: initialId,
-    pt1: {},
-    pt2: {},
-    interpolate: {},
-    histogram: {}
-  },
-  previewContext: {
-    id: initialId,
-    pt1: {},
-    pt2: {},
-    interpolate: {},
-    histogram: {}
-  }
-};
+   pt1: {},
+   pt2: {},
+   interpolate: {},
+   histogram: {}
+ }
 
 // Reducers
 export default function reducer(state = initialState, action){
-  let currentContext = {};
+  let dataPoint = {};
   switch (action.type){
     case types.ADD_START:
-      currentContext = Object.assign(
-        {},
-        state.currentContext,
-        {
-          id: Date.now(),
-          pt1: {
-            imgId: action.data.id,
-            x: action.position.x,
-            y: action.position.y,
-            z: action.data.z,
-            z_2d: action.data.z_2d,
-          }
-        }
-      );
+      dataPoint = data.find(e => e.filename === `${action.id}.jpg`)
       return Object.assign(
         {},
         state,
-        { currentContext }
+        {
+          pt1: {
+            imgId: action.id,
+            x: undefined,
+            y: undefined,
+            z: dataPoint.z
+          }
+        }
       );
     case types.ADD_END:
-      currentContext = Object.assign(
-        {},
-        state.currentContext,
-        {
-          pt2: {
-            imgId: action.data.id,
-            x: action.position.x,
-            y: action.position.y,
-            z: action.data.z,
-            z_2d: action.data.z_2d
-          }
-        }
-      );
+      dataPoint = data.find(e => e.filename === `${action.id}.jpg`)
       return Object.assign(
         {},
         state,
         {
-          contexts: [...state.contexts, currentContext],
-          currentContext: {
-            pt1: {},
-            pt2: {},
-            interpolate: {},
-            histogram: {}
+          pt2: {
+            imgId: action.id,
+            x: undefined,
+            y: undefined,
+            z: dataPoint.z
+          }
+        }
+      );
+    case types.PIN_POSITIONS:
+      return Object.assign(
+        {},
+        state,
+        {
+          pt1: {
+            ...state.pt1,
+            x: action.pt1.x,
+            y: action.pt1.y,
+          },
+          pt2: {
+            ...state.pt2,
+            x: action.pt2.x,
+            y: action.pt2.y,
           }
         }
       );
@@ -195,47 +175,25 @@ export default function reducer(state = initialState, action){
         {},
         state,
         {
-          contexts: [
-            ...state.contexts.filter(e => e.id !== action.contextId),
-            {
-              ...state.contexts.find(e => e.id === action.contextId),
-              interpolate: {
-                weight: action.weight,
-                z: action.z,
-                status: statuses.REQ,
-                response: {},
-                resultUrl: ""
-              }
-            }
-          ]
+          interpolate: {
+            weight: action.weight,
+            z: action.z,
+            status: statuses.REQ,
+            response: {},
+            resultUrl: ""
+          }
         }
       );
     case types.INTERPOLATE_RESP:
-      currentContext = state.contexts.find(e => e.id === action.contextId);
       return Object.assign(
         {},
         state,
         {
-          contexts: [
-            ...state.contexts.filter(e => e.id !== action.contextId),
-            {
-              ...currentContext,
-              interpolate: {
-                ...currentContext.interpolate,
-                status: statuses.OK,
-                response: action.response,
-                resultUrl: staticFileUrl + action.response.replace(/['"]+/g, '')
-              }
-            }
-          ],
-          previewContext: {
-            ...currentContext,
-            interpolate: {
-              ...currentContext.interpolate,
-              status: statuses.OK,
-              response: action.response,
-              resultUrl: staticFileUrl + action.response.replace(/['"]+/g, '')
-            }
+          interpolate: {
+            ...state.interpolate,
+            status: statuses.OK,
+            response: action.response,
+            resultUrl: staticFileUrl + action.response.replace(/['"]+/g, '')
           }
         }
       );
@@ -244,82 +202,54 @@ export default function reducer(state = initialState, action){
         {},
         state,
         {
-          contexts: [
-            ...state.contexts.filter(e => e.id !== action.contextId),
-            {
-              ...state.contexts.find(e => e.id === action.contextId),
-              histogram: {
-                weight: action.weight,
-                z: action.z,
-                status: statuses.REQ,
-                response: {},
-                val: []
-              }
-            }
-          ]
+          histogram: {
+            weight: action.weight,
+            z: action.z,
+            status: statuses.REQ,
+            response: {},
+            val: []
+          }
         }
       );
     case types.HISTOGARM_RESP:
-      currentContext = state.contexts.find(e => e.id === action.contextId);
       return Object.assign(
         {},
         state,
         {
-          contexts: [
-            ...state.contexts.filter(e => e.id !== action.contextId),
-            {
-              ...currentContext,
-              histogram: {
-                ...currentContext.histogram,
-                status: statuses.OK,
-                response: action.response,
-                val: JSON.parse(action.response)
-              }
-            }
-          ],
-          previewContext: {
-            ...currentContext,
-            histogram: {
-              ...currentContext.histogram,
-              status: statuses.OK,
-              response: action.response,
-              val: JSON.parse(action.response)
-            }
+          histogram: {
+            ...state.histogram,
+            status: statuses.OK,
+            response: action.response,
+            val: JSON.parse(action.response)
           }
         }
       );
     case types.API_ERR:
-      currentContext = state.contexts.find(e => e.id === action.contextId);
-      let errorContext = (currentContext.interpolate.status === statuses.REQ)
+      let errorContext = (state.interpolate.status === statuses.REQ)
         ? {
-            ...currentContext,
+            ...state,
             interpolate: {
-              ...currentContext.interpolate,
+              ...state.interpolate,
               status: statuses.ERR,
               response: action.error,
               resultUrl: ""
             }
         }
-        : (currentContext.histogram.status === statuses.REQ)
+        : (state.histogram.status === statuses.REQ)
           ? {
-              ...currentContext,
+              ...state,
               histogram: {
-                ...currentContext.histogram,
+                ...state.histogram,
                 status: statuses.ERR,
                 response: action.error,
                 val: []
               }
           }
-          : {...currentContext};
+          : {...state};
       return Object.assign(
         {},
         state,
-        {
-          contexts: [
-            ...state.contexts.filter(e => e.id !== action.contextId),
-            errorContext
-          ]
-        }
+        errorContext
       );
     case types.RESET:
       return initialState;
@@ -329,3 +259,4 @@ export default function reducer(state = initialState, action){
 }
 
 // Selectors
+export const isShowSlider = state => !isNaN(state.pt1.x) && !isNaN(state.pt1.y) && !isNaN(state.pt2.x) && !isNaN(state.pt2.y)

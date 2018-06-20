@@ -7,6 +7,8 @@ import Shaders  from '../misc/Shaders.js'
 import Random   from 'random-js'
 import { Button } from 'react-toolbox/lib/button';
 import dse from 'javascripts/misc/dynamicSliderEvents.js';
+import ce from 'javascripts/misc/clickEvents.js';
+import ClickState, { stages } from 'javascripts/misc/clickState.js';
 
 import { getVisionJsonURL,
          preloadImage }               from '../misc/Util.js'
@@ -60,51 +62,81 @@ const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
 const textureLoader = new THREE.TextureLoader()
 
 class RenderView extends Component{
+  constructor(props) {
+    super(props)
+    this.clickState = new ClickState()
+  }
+
   render() {
     return (
       <div id="render-view__container">
         <div id="render-view__slider-overlay">
           <Button id="render-view__reset-btn" label="Reset" raised accent />
-          <dynamic-slider id="render-view__slider"
-                          line-color="white"
-                          handle-color="white"
-                          x1="536"
-                          y1="344"
-                          x2="888"
-                          y2="377"></dynamic-slider>
+          {this.props.state.interpolate.isShowSlider &&
+            <dynamic-slider id="render-view__slider"
+                            line-color="white"
+                            handle-color="white"
+                            x1="536"
+                            y1="344"
+                            x2="888"
+                            y2="377"></dynamic-slider>
+          }
+
         </div>
         <div ref={(c) => this._container = c} className="render-view"></div>
       </div>
     )
   }
 
-  // Perhaps this is added for performance reasons?
-  shouldComponentUpdate() {
-    return false
-  }
-
   componentDidMount() {
-    document.getElementById("render-view__container").addEventListener("interpolation-data-ready", e => {
-      console.log(e);
-    })
     document.getElementById("render-view__reset-btn").addEventListener("click", e => {
-      console.log("click");
+      this.clickState.clean(
+        this.props.action.interpolate.reset
+      )
     })
-    document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
-      console.log("START")
-    });
-    document.getElementById("render-view__slider").addEventListener(dse.sliderMove, e => {
-      console.log("MOVING")
-      console.log(e.detail)
-    });
-    document.getElementById("render-view__slider").addEventListener(dse.sliderStop, e => {
-      console.log("STOP")
-    });
+    this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
+      this.clickState.preview()
+      this.props.emitter.emit('zoomToImage', id, true)
+    })
+    this.props.emitter.addListener(ce.select, (id, openSideBar) => {
+      this.clickState.select(
+        this.props.action.interpolate.addStart,
+        this.props.action.interpolate.addEnd,
+        [id]
+      )
+    })
+    this.props.emitter.addListener("interpolate-focus-ready", positionData => {
+      this.clickState.displaySlider(
+        this.props.action.interpolate.pinPositions,
+        [positionData.v1, positionData.v2]
+      )
+    })
     fetch(DATAPOINT_URL).then((res) => {
       return res.json()
     }).then((data) => {
       this._setupScene(data)
     })
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(this.clickState.stage)
+    if (this.clickState.stage === stages.SELECTED_2ND) {
+      this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId, false)
+    }
+    if (this.props.state.interpolate.isShowSlider) {
+      document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
+        this.clickState.startSlider()
+      })
+      document.getElementById("render-view__slider").addEventListener(dse.sliderMove, e => {
+        this.clickState.interpolate(
+          this.props.action.interpolate.async.interpolate,
+          [e.detail.proportion]
+        )
+      })
+      document.getElementById("render-view__slider").addEventListener(dse.sliderStop, e => {
+        this.clickState.stopSlider()
+      })
+    }
   }
 
   _setupScene({points, clusters}) {
@@ -503,21 +535,13 @@ class RenderView extends Component{
         vector2.y = Math.round( ( - vector2.y + 1 ) * canvasss.height / 2 );
         vector2.z = 0;
 
-        console.log("NODE1: ", vector1.x, vector1.y, vector1.z, node1.i)
-        console.log("NODE2: ", vector2.x, vector2.y, vector2.z, node2.i)
-
-        var evt = new CustomEvent('interpolation-data-ready', {
-          bubbles: true,
-          detail: {
-            v1: vector1,
-            v2: vector2,
-            node1name: node1.i,
-            node2name: node2.i
-          }
-        });
-        renderer.domElement.dispatchEvent(evt);
-
-        return Promise.resolve()
+        let positionData = {
+          v1: vector1,
+          v2: vector2,
+          node1name: node1.i,
+          node2name: node2.i
+        }
+        return Promise.resolve(positionData)
       })
     }
 
@@ -545,18 +569,17 @@ class RenderView extends Component{
         })
     })
 
-    this.props.emitter.addListener('interpolateNow', (n1, n2, openSideBar) => {
+    this.props.emitter.addListener('interpolate-nodes-ready', (n1, n2, openSideBar) => {
       // Preload the image results JSON file so it'll show instantly
       // when the sidebar is opened
-
       cameraAnimationQueue = cameraAnimationQueue
-
         .then(() => {
           let node1 = _.find(points, (p) => p.i === n1) //ppt1_001
           let node2 = _.find(points, (p) => p.i === n2) //ppt1_002
           return trackTwoNodes(node1, node2)
         })
-        .then(() => {
+        .then(positionData => {
+          this.props.emitter.emit('interpolate-focus-ready', positionData)
           if (openSideBar) {
             this.props.emitter.emit('showSidebar', 'ppt1_001') // temp hardcode
           }
@@ -842,7 +865,9 @@ class RenderView extends Component{
 }
 
 RenderView.propTypes = {
-  emitter: PropTypes.object.isRequired
+  emitter: PropTypes.object.isRequired,
+  state: PropTypes.object.isRequired,
+  action: PropTypes.object.isRequired
 }
 
 export default RenderView

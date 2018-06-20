@@ -1,14 +1,17 @@
 import { connect } from 'react-redux';
 import RenderView from 'javascripts/components/RenderView.js'
-import { actions as interpolateActions, asyncActions as interpolateAsync } from 'javascripts/reducers/interpolate.js';
+import { actions as interpolateActions, asyncActions as interpolateAsync, isShowSlider } from 'javascripts/reducers/interpolate.js';
 
 // gives our component access to state through props.<prop name>
 function mapStateToProps(state) {
   return {
     state: {
       interpolate: {
-        contexts: state.interpolate.contexts,
-        previewContext: state.interpolate.previewContext
+        pt1: state.interpolate.pt1,
+        pt2: state.interpolate.pt2,
+        result: state.interpolate.interpolate,
+        histogram: state.interpolate.histogram,
+        isShowSlider: isShowSlider(state.interpolate)
       }
     }
   };
@@ -19,11 +22,12 @@ function mapDispatchToProps(dispatch) {
   return {
     action: {
       interpolate: {
-        pinStart: (data, position) => dispatch(interpolateActions.addStartingPoint(data, position)),
-        pinEnd: (data, position) => dispatch(interpolateActions.addEndingPoint(data, position)),
+        addStart: id => dispatch(interpolateActions.addStartingPoint(id)),
+        addEnd: id => dispatch(interpolateActions.addEndingPoint(id)),
+        pinPositions: (pt1, pt2) => dispatch(interpolateActions.pinPoints(pt1, pt2)),
         reset: () => dispatch(interpolateActions.reset()),
         async: {
-          interpolate: (contextId, weight) => dispatch(interpolateAsync.requestInterpolate(contextId, weight))
+          interpolate: weight => dispatch(interpolateAsync.requestInterpolate(weight))
         }
       }
     }

@@ -4,6 +4,7 @@ export const stages = {
   SELECTED_1ST: "SELECTED_1ST",
   SELECTED_2ND: "SELECTED_2ND",
   PREVIEWED: "PREVIEWED",
+  SLIDER_DISPLAYED: "SLIDER_DISPLAYED",
   INTERPOLATED: "INTERPOLATED",
   SLIDER_MOVING: "SLIDER_MOVING",
   SLIDER_STOPPED: "SLIDER_STOPPED"
@@ -46,6 +47,11 @@ export default class ClickState {
 
   preview() {
     this.state.stage = stages.PREVIEWED;
+  }
+
+  displaySlider(pinSliderDispatch, params) {
+    pinSliderDispatch(...params);
+    this.state.stage = stages.SLIDER_DISPLAYED;
   }
 
   startSlider() {
