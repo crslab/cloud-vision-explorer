@@ -5,6 +5,7 @@ import TWEEN    from 'tween.js'
 import _        from 'lodash'
 import Shaders  from '../misc/Shaders.js'
 import Random   from 'random-js'
+import { Button } from 'react-toolbox/lib/button';
 import dse from 'javascripts/misc/dynamicSliderEvents.js';
 
 import { getVisionJsonURL,
@@ -63,6 +64,7 @@ class RenderView extends Component{
     return (
       <div id="render-view__container">
         <div id="render-view__slider-overlay">
+          <Button id="render-view__reset-btn" label="Reset" raised accent />
           <dynamic-slider id="render-view__slider"
                           line-color="white"
                           handle-color="white"
@@ -84,6 +86,9 @@ class RenderView extends Component{
   componentDidMount() {
     document.getElementById("render-view__container").addEventListener("interpolation-data-ready", e => {
       console.log(e);
+    })
+    document.getElementById("render-view__reset-btn").addEventListener("click", e => {
+      console.log("click");
     })
     document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
       console.log("START")
