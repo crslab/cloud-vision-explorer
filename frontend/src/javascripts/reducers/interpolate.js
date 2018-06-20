@@ -64,7 +64,7 @@ const affineZArray = (z1Array, z2Array, weight) => z1Array.map((z1, i) => (weigh
 // returns a plain JSON object, then you can't have multiple dependent state changes.
 export const asyncActions = {
   requestInterpolate: weight => (dispatch, getState) => {
-    let z = affineZArray(getState().pt1.z, getState().pt2.z, weight);
+    let z = affineZArray(getState().interpolate.pt1.z, getState().interpolate.pt2.z, weight);
     let data = JSON.stringify({z});
     dispatch(actions.requestInterpolation(z, weight));
     return VaeImgApi.post(data)

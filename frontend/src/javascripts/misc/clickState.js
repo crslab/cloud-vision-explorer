@@ -77,6 +77,6 @@ export default class ClickState {
 
   clean(cleanDispatch) {
     cleanDispatch();
-    this.state.stage = stages.INTERPOLATED;
+    this.state.stage = stages.CLEAN;
   }
 }

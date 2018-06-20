@@ -76,10 +76,10 @@ class RenderView extends Component{
             <dynamic-slider id="render-view__slider"
                             line-color="white"
                             handle-color="white"
-                            x1="536"
-                            y1="344"
-                            x2="888"
-                            y2="377"></dynamic-slider>
+                            x1={this.props.state.interpolate.pt1.x}
+                            y1={this.props.state.interpolate.pt1.y}
+                            x2={this.props.state.interpolate.pt2.x}
+                            y2={this.props.state.interpolate.pt2.y}></dynamic-slider>
           }
 
         </div>
@@ -107,10 +107,13 @@ class RenderView extends Component{
       )
     })
     this.props.emitter.addListener("interpolate-focus-ready", positionData => {
-      this.clickState.displaySlider(
-        this.props.action.interpolate.pinPositions,
-        [positionData.v1, positionData.v2]
-      )
+      // Mitigate trackTwoNodees' nested promise's delayed event emitting.
+      if (this.clickState.stage === stages.SELECTED_2ND) {
+        this.clickState.displaySlider(
+          this.props.action.interpolate.pinPositions,
+          [positionData.v1, positionData.v2]
+        )
+      }
     })
     fetch(DATAPOINT_URL).then((res) => {
       return res.json()
@@ -120,8 +123,8 @@ class RenderView extends Component{
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log(this.clickState.stage)
     if (this.clickState.stage === stages.SELECTED_2ND) {
+      console.log(this.clickState.stage, stages.SELECTED_2ND)
       this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId, false)
     }
     if (this.props.state.interpolate.isShowSlider) {
@@ -569,7 +572,7 @@ class RenderView extends Component{
         })
     })
 
-    this.props.emitter.addListener('reset', () => trackNode())
+    this.props.emitter.addListener('reset', () => { trackNode() })
 
     this.props.emitter.addListener('interpolate-nodes-ready', (n1, n2, openSideBar) => {
       // Preload the image results JSON file so it'll show instantly
@@ -625,7 +628,10 @@ class RenderView extends Component{
 
       if (!currentlyTrackingNode) {
         points.forEach((n) => {
-          if (n.vec.distanceToSquared(camera.position) < Math.pow(denseFactor * 0.50, 2)) {
+          if ((!this.props.state.interpolate.isShowSlider &&
+               (n.vec.distanceToSquared(camera.position) < Math.pow(denseFactor * 0.50, 2))) ||
+              (this.props.state.interpolate.isShowSlider &&
+               (n.i === this.props.state.interpolate.pt1.imgId || n.i === this.props.state.interpolate.pt2.imgId ))) {
             listOfNearbyVectors.push(n)
           }
         })
@@ -703,8 +709,14 @@ class RenderView extends Component{
             .then((sprite) => {
               nearbyVector.plane = sprite
               nearbyVector.plane.position.copy(nearbyVector.vec)
-              nearbyVector.plane.scale.multiplyScalar(denseFactor / 50) // was 500
-
+              if (this.props.state.interpolate.isShowSlider) {
+                let node1 = _.find(points, (p) => p.i === this.props.state.interpolate.pt1.imgId)
+                let node2 = _.find(points, (p) => p.i === this.props.state.interpolate.pt1.imgId)
+                let lineLength = node2.vec.clone().sub(node1.vec).length()
+                nearbyVector.plane.scale.multiplyScalar(denseFactor / 5000 * lineLength) // was 500
+              } else {
+                nearbyVector.plane.scale.multiplyScalar(denseFactor / 50) // was 500
+              }
               group.add(nearbyVector.plane)
             })
             .then(() => {
