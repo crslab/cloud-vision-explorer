@@ -39,7 +39,7 @@ export default class InfoLink extends Component {
       nPointsChosen: 0,
       singleClickTimer: undefined
     }
-    let thumbnailSize = window.screen.width * 0.02222222222
+    let thumbnailSize = document.querySelector("body").clientWidth * 0.02222222222
     this.thumbnailWidth = thumbnailSize
     this.thumbnailHeight = thumbnailSize
     this.FireClick = this.FireClick.bind(this)
