@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import ImageView from './ImageView'
 import RenderView from '../containers/RenderViewContainer'
 import InfoLink from './InfoLink'
 import ImageCounter from './ImageCounter'
@@ -17,8 +16,8 @@ const emitter = new EventEmitter()
 const style = {
   infoLink: {
     position: 'absolute',
-    top: '5vh', //height of logos on left panel
-    left: '2vh',
+    top: '10vh', //height of logos on left panel
+    left: '5vh',
     width: '20vh',
     zIndex: 100
   },
@@ -45,10 +44,6 @@ class FrontPage extends Component {
       <div >
         <ImageCounter style={style.imageCounter} emitter={emitter} />
         <InfoLink style={style.infoLink} emitter={emitter} />
-        <ImageView
-          emitter={emitter}
-          highlightFaceLandmarks={sidebar.highlightFaceLandmarks}
-        />
         <Sidebar sidebar={sidebar} emitter={emitter} {...sidebarBounds} />
         <RenderView emitter={emitter} />
       </div>

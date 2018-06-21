@@ -5,21 +5,10 @@ import ReactDom from 'react-dom'
 import { Provider } from 'react-redux'
 import { HashRouter, Route } from 'react-router-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin'
-import { overrideComponentTypeChecker } from 'react-toolbox/lib'
 import importWebComponents from 'importWebComponents'
-
 
 importWebComponents()
 injectTapEventPlugin()
-
-overrideComponentTypeChecker((classType, reactElement) => {
-  return (
-    reactElement && (
-      reactElement.type === classType ||
-      reactElement.type.name === classType.name
-    )
-  )
-})
 
 import configureStore from './store/configureStore'
 import FrontPage from './components/FrontPage'

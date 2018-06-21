@@ -25,6 +25,10 @@
     height: 100%;
   }
 
+  .sidebar-content{
+    padding: 30px;
+  }
+
   .feature-indicator {
     list-style-type: none;
     padding: 0;
@@ -43,7 +47,6 @@
       }
 
       button {
-        padding: 15px 0;
         width: 100%;
         min-width: 0;
         border-radius: 0;
