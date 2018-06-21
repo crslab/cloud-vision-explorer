@@ -6,7 +6,7 @@
   border: none !important;
   color: #d9d9d9;
   --drawer-mobile-width: 20vw;
-  --progress-height: 2vh;
+  --progress-height: 1vh;
 
   ::-webkit-scrollbar {
     width: 1em;
@@ -50,7 +50,7 @@
         }
 
         li {
-          height: 2vh;
+          height: 8vh;
         }
       }
     }
