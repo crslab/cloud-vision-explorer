@@ -75,7 +75,9 @@ class RenderView extends Component{
           {this.props.state.interpolate.isShowSlider &&
             <dynamic-slider id="render-view__slider"
                             line-color="white"
-                            handle-color="white"
+                            handle-color="pink"
+                            line-thickness="10"
+                            handle-radius="20"
                             x1={this.props.state.interpolate.pt1.x}
                             y1={this.props.state.interpolate.pt1.y}
                             x2={this.props.state.interpolate.pt2.x}
