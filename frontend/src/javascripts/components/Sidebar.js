@@ -9,6 +9,7 @@ import ProgressBar from 'react-toolbox/lib/progress_bar'
 import 'stylesheets/Sidebar'
 import { gcsGoogleStaticMapsApiKey } from '../config.js'
 import { getVisionJsonURL } from '../misc/Util.js'
+import RatingsHist from './RatingsHist/RatingsHist.js';
 
 class LabelAnnotations extends Component {
   static get propTypes() {
@@ -84,16 +85,20 @@ export default class Sidebar extends Component {
     this.state = {
       activeTabs: {
         label: true,
-        image: false
+        image: false,
+        histogram: false
       },
       labelAnnotations: [],
-      imagePropertiesAnnotation: {}
+      imagePropertiesAnnotation: {},
+      histogramAnnotation: []
     }
 
     this.labelAnnotationsTabId = "sidebar__tab-label-annotations"
     this.imagePropertiesAnnotationTabId = "sidebar__tab-image-properties"
+    this.histogramTabId = "sidebar__tab-histogram"
     this.labelAnnotationsId = "sidebar__label-annotations"
     this.imagePropertiesAnnotationId = "sidebar__image-properties"
+    this.histogramId = "sidebar__histogram"
 
     this.tabChange = this.tabChange.bind(this)
   }
@@ -125,8 +130,10 @@ export default class Sidebar extends Component {
   componentDidUpdate(prevProps) {
     let labelAnnotationsTab = document.getElementById(this.labelAnnotationsTabId)
     let imagePropertiesTab = document.getElementById(this.imagePropertiesAnnotationTabId)
+    let histogramTab = document.getElementById(this.histogramTabId)
     let labelAnnotations = document.getElementById(this.labelAnnotationsId)
     let imageProperties = document.getElementById(this.imagePropertiesAnnotationId)
+    let histogram = document.getElementById(this.histogramId)
     if (labelAnnotationsTab && imagePropertiesTab && labelAnnotations && imageProperties) {
       labelAnnotationsTab.addEventListener("click", e => {
         this.tabChange("label", labelAnnotations)
@@ -172,6 +179,10 @@ export default class Sidebar extends Component {
           <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
               <Button icon="photo" ripple inverse />
           </li>
+          {/* Histogram tab */}
+          <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
+              <Button icon="bar_chart" ripple inverse />
+          </li>
         </ul>
 
         {/* Components */}
@@ -181,6 +192,11 @@ export default class Sidebar extends Component {
           </div>
           <div id={this.imagePropertiesAnnotationId} className="sidebar-content">
             <ImageProperties imagePropertiesAnnotation={this.state.imagePropertiesAnnotation} />
+          </div>
+          {/* Histogram */}
+          <div id={this.histogramId} className="sidebar-content">
+            {/* <RatingsHist histogramAnnotation={this.state.histogramAnnotation} /> */}
+            <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/>
           </div>
         </div>
 

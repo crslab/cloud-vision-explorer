@@ -11,6 +11,7 @@
     "lint": "gulp lint"
   },
   "dependencies": {
+    "@material-ui/core": "^1.2.3",
     "@webcomponents/webcomponentsjs": "^2.0.2",
     "cross-fetch": "^2.2.1",
     "exports-loader": "^0.7.0",
