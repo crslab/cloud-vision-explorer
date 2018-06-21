@@ -532,7 +532,7 @@ class RenderView extends Component{
 
         // map to 2D screen space
         vector1.x = Math.round( (   vector1.x + 1 ) * canvasss.width  / 2 );
-        vector1.y = Math.round( ( - vector1.y + 1 ) * canvasss.height / 2 );
+        vector1.y = Math.round( ( - vector1.y + 1 ) * canvasss.height / 2 ) - 30; //bias from some top bar.
         vector1.z = 0;
 
         var vector2 = node2.vec.clone()
@@ -541,7 +541,7 @@ class RenderView extends Component{
 
         // map to 2D screen space
         vector2.x = Math.round( (   vector2.x + 1 ) * canvasss.width  / 2 );
-        vector2.y = Math.round( ( - vector2.y + 1 ) * canvasss.height / 2 );
+        vector2.y = Math.round( ( - vector2.y + 1 ) * canvasss.height / 2 ) - 30;
         vector2.z = 0;
 
         let positionData = {
