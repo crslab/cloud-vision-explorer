@@ -379,9 +379,12 @@ export default class Sidebar extends Component {
         </li>
       )
     }
-
+    let drawerStyle = {
+      "--drawer-mobile-width": document.querySelector("body").clientWidth * 0.1427777777777
+    }
     return (
       <Drawer className="sidebar"
+              style={drawerStyle}
               active={sidebar.isActive}
               type="right"
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
