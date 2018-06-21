@@ -62,6 +62,14 @@ module.exports = {
         ]
       },
       {
+        test: /\.css$/,
+        include: path.resolve(__dirname, path.join('src', 'javascripts', 'components', 'RatingsHist')),
+        use: [
+          "style-loader",
+          "css-loader"
+        ]
+      },
+      {
         test: /\.svg$/,
         loader: 'url-loader?limit=10000'
       }
