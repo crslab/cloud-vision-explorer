@@ -96,8 +96,10 @@ class RenderView extends Component{
       this.props.emitter.emit('reset')
     })
     this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
-      this.clickState.preview()
-      this.props.emitter.emit('zoomToImage', id, true)
+      if (!this.props.state.interpolate.isShowSlider){
+        this.clickState.preview()
+        this.props.emitter.emit('zoomToImage', id, true)
+      }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
       this.clickState.select(
@@ -550,19 +552,7 @@ class RenderView extends Component{
       cameraAnimationQueue = cameraAnimationQueue
 
         .then(() => {
-            if (id === 'ppt1_002'){
-                let node1 = _.find(points, (p) => p.i === 'ppt1_010') //ppt1_001
-                let node2 = _.find(points, (p) => p.i === 'ppt3_035') //ppt1_002
-                return trackTwoNodes(node1, node2)
-            }
-            else if (id === 'ppt1_004'){
-                let node1 = _.find(points, (p) => p.i === 'ppt1_001') //ppt1_001
-                let node2 = _.find(points, (p) => p.i === 'ppt1_003') //ppt1_002
-                return trackTwoNodes(node1, node2)
-            }
-            else
-                return trackNode(_.find(points, (p) => p.i === id))
-
+            return trackNode(_.find(points, (p) => p.i === id))
         })
         .then(() => {
           if (openSideBar) {
