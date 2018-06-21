@@ -148,8 +148,8 @@ class RenderView extends Component{
 
     this.props.emitter.emit('imageCount', points.length)
 
-    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, denseFactor * 10)
-    camera.position.z = denseFactor * 1.2
+    const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, denseFactor * 10)
+    camera.position.z = denseFactor * 0.6
 
     const scene = new THREE.Scene()
 
@@ -321,7 +321,7 @@ class RenderView extends Component{
 
       // Reset lookAtTarget to (0,0,0) when only one image is selected
       lookAtTarget.set(0,0,0)
-      const resetPos = new THREE.Vector3(0, 0, denseFactor * 1.2)
+      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.6)
 
       const nodeGroup = clusters[((node || {}).g || 0)]
 
@@ -329,8 +329,11 @@ class RenderView extends Component{
       // as that needs to lerp to its target instead
       const startPoint = camera.position.clone()
 
-      const endPointUnit = ((node || {}).vec || resetPos).clone().normalize()
-      const endPoint = ((node || {}).vec || resetPos).clone().add(endPointUnit.clone().multiplyScalar(50))
+      const endPointUnit = ((node || {}).vec || resetPos).clone().normalize() 
+      const endPoint = ((node || {}).vec || resetPos).clone() //default for reset button
+      if (node) { //if previewing a node, go back 20 units distance away
+        endPoint.add(endPointUnit.clone().multiplyScalar(20))
+      }
 
       const startPointNormalized = startPoint.clone().normalize()
       const endPointNormalized = endPoint.clone().normalize()
@@ -350,6 +353,13 @@ class RenderView extends Component{
       const groupFocusTime = 1000
 
       const waitTime = totalAnimTime - otherGroupsFadeInTime - groupFocusTime
+
+      let resetTween = TWEEN.Easing.Exponential.InOut
+      if (!node){ // make reset FAST
+        totalAnimTime /= 2
+      } else { // and let preview be linear.
+        resetTween = TWEEN.Easing.Linear.None
+      }
 
       return Promise.resolve()
       // Make other clusters look dark
@@ -400,7 +410,7 @@ class RenderView extends Component{
 
             camera.position.copy(interpolatedPosition)
             cameraTargetPosition.copy(camera.position)
-          }, TWEEN.Easing.Linear.None)
+          }, resetTween)
         ])
       })
       .then(() => {
@@ -423,7 +433,7 @@ class RenderView extends Component{
 
       // Camera is shifted from the midpoint in a direction perpendicular to the two nodes' position vectors
       const crossNodes = (node2.vec.clone().cross(node1.vec.clone())).normalize()
-      const endPoint   = midPoint.clone().add(crossNodes.clone().multiplyScalar(lineLen/0.7)) // tan35 computation shortcut for now
+      const endPoint   = midPoint.clone().add(crossNodes.clone().multiplyScalar(lineLen/1.73)) // tan60 computation shortcut for now
 
       console.log("Node 1: "     + node1.vec.x, node1.vec.y, node1.vec.z)
       console.log("Node 2: "     + node2.vec.x, node2.vec.y, node2.vec.z)
@@ -702,7 +712,7 @@ class RenderView extends Component{
                 let node1 = _.find(points, (p) => p.i === this.props.state.interpolate.pt1.imgId)
                 let node2 = _.find(points, (p) => p.i === this.props.state.interpolate.pt2.imgId)
                 let lineLength = node2.vec.clone().sub(node1.vec).length()
-                nearbyVector.plane.scale.multiplyScalar(denseFactor / 5000 * lineLength) // was 500
+                nearbyVector.plane.scale.multiplyScalar(denseFactor / 2000 * lineLength) // was 500
               } else {
                 nearbyVector.plane.scale.multiplyScalar(denseFactor / 50) // was 500
               }
