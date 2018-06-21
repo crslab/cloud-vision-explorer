@@ -49,80 +49,13 @@ class GraphTab extends Component {
 
   static get propTypes() {
     return {
-      vision: PropTypes.object.isRequired,
-      highlightFaceLandmarks: PropTypes.bool.isRequired,
-      toggleHighlightFaceLandmarks: PropTypes.func.isRequired,
+      vision: PropTypes.object.isRequired
     }
-  }
-
-  landmarkContent(annon) {
-    if(!_.has(annon, 'locations') || annon.locations.length == 0) {
-      return (
-        <div className="description">
-          {annon.description}
-        </div>
-      )
-    }
-
-    const {latitude, longitude} = annon.locations[0].latLng   // takes only the first one
-    const style = {
-      wrapper: {
-        marginTop: 8,
-        fontSize: 'medium'
-      },
-      maps: {
-        marginTop: '20px',
-        height: '100px',
-        backgroundPosition: 'center',
-        backgroundImage: `url('https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=11&size=306x200&markers=${latitude},${longitude}&key=${gcsGoogleStaticMapsApiKey}')`
-      }
-    }
-
-    const link = `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},11z`
-
-    return (
-      <div className="description">
-        <div>{annon.description}</div>
-        <div style={style.wrapper}>
-          {_.round(latitude, 6)}, {_.round(longitude, 6)}
-          <a href={link} ><div style={style.maps}></div></a>
-        </div>
-      </div>
-    )
   }
 
   render() {
     const { vision } = this.props
-    const classForPerson = (idx) => {
-      const classes = ['primary', 'secondary', 'third']
-      return `face-detection-person ${classes[idx % classes.length]}`
-    }
-    const colorForPerson = (idx) => {
-      // Has to be hardcoded unfortunately, since there's no way
-      // to extract a color from CSS to JS unless we use react inline styles
-      // Taken from $sidebar-primary-color-x
-      const colors = [0x1DE9B6, 0xD4E157, 0x2196F3]
-      return colors[idx % colors.length]
-    }
-    const likelihoodLevel = (likelihood) => {
-      const levelMap = {
-        UNKNOWN: 0,
-        VERY_UNLIKELY: 0,
-        UNLIKELY: 1,
-        POSSIBLE: 2,
-        LIKELY: 3,
-        VERY_LIKELY: 4
-      }
-      const level = levelMap[likelihood]
-      return (
-        <ul className="likelihood-level">
-          <li className={level > 0 ? 'active' : ''}></li>
-          <li className={level > 1 ? 'active' : ''}></li>
-          <li className={level > 2 ? 'active' : ''}></li>
-          <li className={level > 3 ? 'active' : ''}></li>
-        </ul>
-      )
-    }
+
     const getDetectionSection = (key, className, label, callback) => {
       return key in vision ?
         <section className={className}>
@@ -130,14 +63,7 @@ class GraphTab extends Component {
           {callback(vision[key])}
         </section> : ''
     }
-    const getAngleSection = (name, value) => {
-      return (
-        <section className="angle">
-          <div className="angle-label">{name}</div>
-          <span className="angle-value">{_.round(value)}&deg;</span>
-        </section>
-      )
-    }
+
     const getColorStyle = (color) => {
       const c = color.color
       return {
@@ -166,138 +92,12 @@ class GraphTab extends Component {
             </div>
           )
         )}
-        {getDetectionSection('textAnnotations', 'text-detection', 'TEXT', annons =>
-          annons.map((text, idx) =>
-            <p key={idx}>
-              <span className="text-quote">“</span>
-              <span className="text-description">{text.description}</span>
-              <span className="text-quote post">„</span>
-            </p>
-          )
-        )}
-        {getDetectionSection('faceAnnotations', 'face-detection', 'FACE', annons =>
-          <div>
-            <div className="highlight-face-landmarks">
-              <img
-                className="custom-icon"
-                src={require('../../images/icon/highlight_face_landmarks')}
-              />
-              <span className="highlight-face-landmarks-label">Landmarks</span>
-              <Switch
-                checked={this.props.highlightFaceLandmarks}
-                onChange={this.props.toggleHighlightFaceLandmarks}
-              />
-            </div>
-            {annons.map((face, idx) =>
-              <div className={classForPerson(idx)} key={idx}>
-                <div>
-                  <FaceView className="face-view"
-                    faceColor={colorForPerson(idx)}
-                    rollAngle={face.rollAngle}
-                    panAngle={face.panAngle}
-                    tiltAngle={face.tiltAngle}
-                  />
-                  <div className="person-label">Person {idx + 1}</div>
-                  {getAngleSection('Roll', face.rollAngle)}
-                  {getAngleSection('Pan', face.panAngle)}
-                  {getAngleSection('Tilt', face.tiltAngle)}
-                </div>
-                <div className="likelihoods">
-                  <div className="likelihood">
-                    <FontIcon className="likelihood-icon" value="sentiment_satisfied" />
-                    <div className="likelihood-label">Joy</div>
-                    {likelihoodLevel(face.joyLikelihood)}
-                  </div>
-                  <div className="likelihood">
-                    <FontIcon className="likelihood-icon" value="sentiment_dissatisfied" />
-                    <div className="likelihood-label">Sorrow</div>
-                    {likelihoodLevel(face.sorrowLikelihood)}
-                  </div>
-                  <div className="likelihood">
-                    <InlineSVG
-                      className="likelihood-icon custom-icon"
-                      src={require('../../images/icon/anger')}
-                    />
-                    <div className="likelihood-label">Anger</div>
-                    {likelihoodLevel(face.angerLikelihood)}
-                  </div>
-                  <div className="likelihood">
-                    <InlineSVG
-                      className="likelihood-icon custom-icon"
-                      src={require('../../images/icon/surprise')}
-                    />
-                    <div className="likelihood-label">Surprise</div>
-                    {likelihoodLevel(face.surpriseLikelihood)}
-                  </div>
-                  <div className="likelihood">
-                    <FontIcon className="likelihood-icon" value="flare" />
-                    <div className="likelihood-label">Under Expose</div>
-                    {likelihoodLevel(face.underExposedLikelihood)}
-                  </div>
-                  <div className="likelihood">
-                    <FontIcon className="likelihood-icon" value="blur_on" />
-                    <div className="likelihood-label">Blur</div>
-                    {likelihoodLevel(face.blurredLikelihood)}
-                  </div>
-                  <div className="likelihood">
-                    <InlineSVG
-                      className="likelihood-icon custom-icon headwear"
-                      src={require('../../images/icon/headwear')}
-                    />
-                    <div className="likelihood-label">Headwear</div>
-                    {likelihoodLevel(face.headwearLikelihood)}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        {getDetectionSection('logoAnnotations', 'logo-detection', 'LOGO', annons =>
-          annons.map(({description, mid}) =>
-            <div key={mid} className="logo-detection">
-              <PlusTitle>
-                <p className="description">{description}</p>
-              </PlusTitle>
-            </div>
-          )
-        )}
-        {getDetectionSection('landmarkAnnotations', 'landmark-detection', 'LANDMARK', annons =>
-          annons.map((annon, index) =>
-            <div key={index} className="landmark-detection">
-              {this.landmarkContent(annon)}
-            </div>
-          )
-        )}
         {getDetectionSection('imagePropertiesAnnotation', 'image-properties', 'COLOR', annon =>
           <ul>
             {_.orderBy(annon.dominantColors.colors, ['score'], ['desc']).map((color, idx) =>
               <li key={idx} style={getColorStyle(color)} />
             )}
           </ul>
-        )}
-        {getDetectionSection('safeSearchAnnotation', 'safesearch-detection', 'INAPPROPRIATE', annon =>
-          <div className="likelihoods">
-            <div className="likelihoods-row">
-              <div className="likelihood">
-                <div className="likelihood-label">Adult</div>
-                {likelihoodLevel(annon.adult)}
-              </div>
-              <div className="likelihood">
-                <div className="likelihood-label">Spoof</div>
-                {likelihoodLevel(annon.spoof)}
-              </div>
-            </div>
-            <div className="likelihoods-row">
-              <div className="likelihood">
-                <div className="likelihood-label">Medical</div>
-                {likelihoodLevel(annon.medical)}
-              </div>
-              <div className="likelihood">
-                <div className="likelihood-label">Violence</div>
-                {likelihoodLevel(annon.violence)}
-              </div>
-            </div>
-          </div>
         )}
       </div>
     )
@@ -388,29 +188,14 @@ export default class Sidebar extends Component {
 
         <ul className="feature-indicator">
           {getIndicator('labelAnnotations', 'label_outline', 'label-detection')}
-          {getIndicator('textAnnotations', 'translate', 'text-detection')}
-          {getIndicator('faceAnnotations', 'face', 'face-detection')}
-          {getIndicator(
-            'logoAnnotations', 'logo_detection', 'logo-detection',
-            { customIcon: true }
-          )}
-          {getIndicator('landmarkAnnotations', 'place', 'landmark-detection')}
           {getIndicator('imagePropertiesAnnotation', 'photo', 'image-properties')}
-          {getIndicator(
-            'safeSearchAnnotation', 'safesearch', 'safesearch-detection',
-            { customIcon: true }
-          )}
         </ul>
 
         <SidebarTabs className="detail-tab"
                      index={sidebar.tabIndex}
                      onChange={changeTab}>
           <Tab label='Graphical' className={classForTab(0)}>
-            <GraphTab
-              vision={this.state.vision}
-              highlightFaceLandmarks={sidebar.highlightFaceLandmarks}
-              toggleHighlightFaceLandmarks={this.props.toggleHighlightFaceLandmarks}
-            />
+            <GraphTab vision={this.state.vision} />
           </Tab>
           <Tab label='JSON' className={classForTab(1)}>
             <pre>{JSON.stringify(this.state.vision, null, 2)}</pre>
