@@ -441,7 +441,7 @@ class RenderView extends Component{
 
       const zoomOutDistance = 2000
 
-      let totalAnimTime = angle * 4000
+      let totalAnimTime = angle * 2000
       totalAnimTime = Math.max(totalAnimTime, 2000)
 
       const otherGroupsFadeInTime = 1000
@@ -710,7 +710,7 @@ class RenderView extends Component{
               nearbyVector.plane.position.copy(nearbyVector.vec)
               if (this.props.state.interpolate.isShowSlider) {
                 let node1 = _.find(points, (p) => p.i === this.props.state.interpolate.pt1.imgId)
-                let node2 = _.find(points, (p) => p.i === this.props.state.interpolate.pt1.imgId)
+                let node2 = _.find(points, (p) => p.i === this.props.state.interpolate.pt2.imgId)
                 let lineLength = node2.vec.clone().sub(node1.vec).length()
                 nearbyVector.plane.scale.multiplyScalar(denseFactor / 5000 * lineLength) // was 500
               } else {
