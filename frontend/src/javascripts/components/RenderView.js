@@ -104,6 +104,9 @@ class RenderView extends Component{
       }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
+      if (!this.props.state.interpolate.isCanSelect(id)) {
+        return;
+      }
       this.clickState.select(
         this.props.action.interpolate.addStart,
         this.props.action.interpolate.addEnd,
@@ -755,7 +758,7 @@ class RenderView extends Component{
       raycaster.setFromCamera( mouse, camera )
       const intersects = raycaster.intersectObject(particles)
 
-      if ( intersects.length > 0 && !controls.hasRecentlyRotated) {
+      if ( intersects.length > 0 && !controls.hasRecentlyRotated && !this.props.state.interpolate.isShowSlider) {
         const index = intersects[ 0 ].index
         if ( mousedownObject === index ) {
           // Make sure the object has an actual image
