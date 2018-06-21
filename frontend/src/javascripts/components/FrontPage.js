@@ -17,8 +17,8 @@ const emitter = new EventEmitter()
 const style = {
   infoLink: {
     position: 'absolute',
-    top: '5vh', //height of logos on left panel
-    left: '2vh',
+    top: '10vh', //height of logos on left panel
+    left: '5vh',
     width: '20vh',
     zIndex: 100
   },
