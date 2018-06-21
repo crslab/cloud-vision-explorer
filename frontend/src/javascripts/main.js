@@ -11,7 +11,6 @@ importWebComponents()
 injectTapEventPlugin()
 
 import configureStore from './store/configureStore'
-import EntrancePage from './components/EntrancePage'
 import FrontPage from './components/FrontPage'
 
 const store = configureStore()
@@ -21,7 +20,7 @@ ReactDom.render(
     <HashRouter>
       <div>
         <Route path="/galaxy" component={FrontPage} />
-        <Route path="/" component={EntrancePage} />
+        <Route path="/" component={FrontPage} />
       </div>
     </HashRouter>
   </Provider>,

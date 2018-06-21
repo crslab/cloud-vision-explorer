@@ -92,6 +92,9 @@ export default class InfoLink extends Component {
         <li key={item.id} style={style.imageBookmarks.li}
             onClick={e => this.FireClick(item)}>
           <img src={getThumbUrl(item.id)} width={this.thumbnailWidth} height={this.thumbnailHeight} className='thumbnailImg' />
+          <br></br>
+          <br></br>
+          <br></br>
         </li>
       )
     })

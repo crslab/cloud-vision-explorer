@@ -260,3 +260,5 @@ export default function reducer(state = initialState, action){
 
 // Selectors
 export const isShowSlider = state => !isNaN(state.pt1.x) && !isNaN(state.pt1.y) && !isNaN(state.pt2.x) && !isNaN(state.pt2.y)
+export const isCanSelect = (state, imgId) => (imgId !== state.pt1.imgId) && (imgId !== state.pt2.imgId)
+
