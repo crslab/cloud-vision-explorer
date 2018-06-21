@@ -61,6 +61,19 @@ const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
 
 const textureLoader = new THREE.TextureLoader()
 
+const style = {
+  resetButton: {
+    width: 250,
+    height: 150,
+    backgroundColor: 'red',
+    fontWeight: 'bold',
+    fontSize: 50,
+    top: 50,
+    left: 75
+
+  }
+}
+
 class RenderView extends Component{
   constructor(props) {
     super(props)
@@ -71,7 +84,7 @@ class RenderView extends Component{
     return (
       <div id="render-view__container">
         <div id="render-view__slider-overlay">
-          <Button id="render-view__reset-btn" label="Reset" raised accent />
+          <Button id="render-view__reset-btn" style={style.resetButton} label="Reset" raised accent />
           {this.props.state.interpolate.isShowSlider &&
             <dynamic-slider id="render-view__slider"
                             line-color="white"
