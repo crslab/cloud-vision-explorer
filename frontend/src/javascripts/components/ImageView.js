@@ -48,10 +48,10 @@ export default class ImaveView extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    this.props.emitter.addListener('showSidebar', (id) => {
+    /*this.props.emitter.addListener('showSidebar', (id) => {
       this.setState({
         id,
-        active: true
+        active: false //true
       })
       fetch(getVisionJsonURL(id)).then((res) => {
         return res.json()
@@ -62,7 +62,7 @@ export default class ImaveView extends Component {
 
     this.props.emitter.addListener('hideSidebar', () => {
       this.setState({ active: false, vision: {} })
-    })
+    })*/
   }
 
   componentWillUnmount() {
