@@ -27,13 +27,17 @@
     height: 100%;
   }
 
-  .sidebar-content{
+  .sidebar__content-container{
     padding: 5vh;
-    color: #a4a4a4;
 
-    .label{
-      color: white;
-      padding-bottom: 2vh;
+    .sidebar-content{
+      padding-bottom: 5vh;
+      color: #a4a4a4;
+
+      label{
+        color: white;
+        padding-bottom: 2vh;
+      }
     }
   }
 
