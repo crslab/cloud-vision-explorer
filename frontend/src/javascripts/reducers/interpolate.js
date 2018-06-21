@@ -5,6 +5,7 @@ import data from 'data/artdataWithImgSize.json'
 export const types = {
   ADD_START: "ADD_START",
   ADD_END: "ADD_END",
+  IMAGE_LOADED: "IMAGE_LOADED",
   PIN_POSITIONS: "PIN_POSITIONS",
   INTERPOLATE_REQ: "INTERPOLATE_REQ",
   INTERPOLATE_RESP: "INTERPOLATE_RESP",
@@ -23,6 +24,9 @@ export const actions = {
   addEndingPoint: id => ({
     type: types.ADD_END,
     id
+  }),
+  notifyImagesReady: () => ({
+    type: types.IMAGE_LOADED
   }),
   pinPoints: (pt1, pt2) => ({
     type: types.PIN_POSITIONS,
@@ -86,12 +90,14 @@ export const asyncActions = {
        x: 0,
        y: 0,
        z: [],
+       isImageLoaded: false
      },
      pt2: {
        imgId: 0,
        x: 0,
        y: 0
        z: [],
+       isImageLoaded: false
      },
      interpolate: {
        z: [],
@@ -135,7 +141,8 @@ export default function reducer(state = initialState, action){
             imgId: action.id,
             x: undefined,
             y: undefined,
-            z: dataPoint.z
+            z: dataPoint.z,
+            isImageLoaded: false
           }
         }
       );
@@ -149,8 +156,24 @@ export default function reducer(state = initialState, action){
             imgId: action.id,
             x: undefined,
             y: undefined,
-            z: dataPoint.z
+            z: dataPoint.z,
+            isImageLoaded: false
           }
+        }
+      );
+    case types.IMAGE_LOADED:
+      return Object.assign(
+        {},
+        state,
+        {
+            pt1: {
+                ...state.pt1,
+                isImageLoaded: true
+            },
+            pt2: {
+                ...state.pt2,
+                isImageLoaded: true
+            }
         }
       );
     case types.PIN_POSITIONS:
@@ -259,6 +282,7 @@ export default function reducer(state = initialState, action){
 }
 
 // Selectors
-export const isShowSlider = state => !isNaN(state.pt1.x) && !isNaN(state.pt1.y) && !isNaN(state.pt2.x) && !isNaN(state.pt2.y)
+export const isSliderNodesReady = state => !isNaN(state.pt1.x) && !isNaN(state.pt1.y) && !isNaN(state.pt2.x) && !isNaN(state.pt2.y)
+export const isShowSlider = state => !isNaN(state.pt1.x) && !isNaN(state.pt1.y) && !isNaN(state.pt2.x) && !isNaN(state.pt2.y) && state.pt1.isImageLoaded && state.pt2.isImageLoaded
 export const isCanSelect = (state, imgId) => (imgId !== state.pt1.imgId) && (imgId !== state.pt2.imgId)
 

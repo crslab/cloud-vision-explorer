@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import RenderView from 'javascripts/components/RenderView.js'
-import { actions as interpolateActions, asyncActions as interpolateAsync, isShowSlider, isCanSelect } from 'javascripts/reducers/interpolate.js';
+import { actions as interpolateActions, asyncActions as interpolateAsync, isSliderNodesReady, isShowSlider, isCanSelect } from 'javascripts/reducers/interpolate.js';
 
 // gives our component access to state through props.<prop name>
 function mapStateToProps(state) {
@@ -11,6 +11,7 @@ function mapStateToProps(state) {
         pt2: state.interpolate.pt2,
         result: state.interpolate.interpolate,
         histogram: state.interpolate.histogram,
+        isSliderNodesReady: isSliderNodesReady(state.interpolate),
         isShowSlider: isShowSlider(state.interpolate),
         isCanSelect: imgId => isCanSelect(state.interpolate, imgId)
       }
@@ -25,6 +26,7 @@ function mapDispatchToProps(dispatch) {
       interpolate: {
         addStart: id => dispatch(interpolateActions.addStartingPoint(id)),
         addEnd: id => dispatch(interpolateActions.addEndingPoint(id)),
+        notifyImagesReady: () => dispatch(interpolateActions.notifyImagesReady()),
         pinPositions: (pt1, pt2) => dispatch(interpolateActions.pinPoints(pt1, pt2)),
         reset: () => dispatch(interpolateActions.reset()),
         async: {

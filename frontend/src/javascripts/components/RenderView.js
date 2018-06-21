@@ -98,7 +98,7 @@ class RenderView extends Component{
       this.props.emitter.emit('reset')
     })
     this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isShowSlider){
+      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady){
         this.clickState.preview()
         this.props.emitter.emit('zoomToImage', id, true)
       }
@@ -121,6 +121,9 @@ class RenderView extends Component{
           [positionData.v1, positionData.v2]
         )
       }
+    })
+    this.props.emitter.addListener('interpolate-images-ready', () => {
+        this.props.action.interpolate.notifyImagesReady()
     })
     fetch(DATAPOINT_URL).then((res) => {
       return res.json()
@@ -632,9 +635,9 @@ class RenderView extends Component{
 
       if (!currentlyTrackingNode) {
         points.forEach((n) => {
-          if ((!this.props.state.interpolate.isShowSlider &&
+          if ((!this.props.state.interpolate.isSliderNodesReady &&
                (n.vec.distanceToSquared(camera.position) < Math.pow(denseFactor * 0.50, 2))) ||
-              (this.props.state.interpolate.isShowSlider &&
+              (this.props.state.interpolate.isSliderNodesReady &&
                (n.i === this.props.state.interpolate.pt1.imgId || n.i === this.props.state.interpolate.pt2.imgId ))) {
             listOfNearbyVectors.push(n)
           }
@@ -713,7 +716,7 @@ class RenderView extends Component{
             .then((sprite) => {
               nearbyVector.plane = sprite
               nearbyVector.plane.position.copy(nearbyVector.vec)
-              if (this.props.state.interpolate.isShowSlider) {
+              if (this.props.state.interpolate.isSliderNodesReady) {
                 let node1 = _.find(points, (p) => p.i === this.props.state.interpolate.pt1.imgId)
                 let node2 = _.find(points, (p) => p.i === this.props.state.interpolate.pt2.imgId)
                 let lineLength = node2.vec.clone().sub(node1.vec).length()
@@ -722,6 +725,10 @@ class RenderView extends Component{
                 nearbyVector.plane.scale.multiplyScalar(denseFactor / 50) // was 500
               }
               group.add(nearbyVector.plane)
+            })
+            .then(() => {
+              if (this.props.state.interpolate.isSliderNodesReady)
+                this.props.emitter.emit('interpolate-images-ready')
             })
             .then(() => {
               return tween({
@@ -758,7 +765,7 @@ class RenderView extends Component{
       raycaster.setFromCamera( mouse, camera )
       const intersects = raycaster.intersectObject(particles)
 
-      if ( intersects.length > 0 && !controls.hasRecentlyRotated && !this.props.state.interpolate.isShowSlider) {
+      if ( intersects.length > 0 && !controls.hasRecentlyRotated && !this.props.state.interpolate.isSliderNodesReady) {
         const index = intersects[ 0 ].index
         if ( mousedownObject === index ) {
           // Make sure the object has an actual image
