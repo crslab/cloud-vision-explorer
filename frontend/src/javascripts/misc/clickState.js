@@ -33,10 +33,8 @@ export default class ClickState {
         selectEndDispatch(...params);
         this.state.stage = stages.SELECTED_2ND;
         break;
-      case stages.SELECTED_2ND:
       case stages.CLEAN:
       case stages.PREVIEWED:
-      case stages.SLIDER_STOPPED:
         selectStartDispatch(...params);
         this.state.stage = stages.SELECTED_1ST;
         break;
