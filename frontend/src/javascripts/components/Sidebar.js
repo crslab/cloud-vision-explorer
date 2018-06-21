@@ -25,16 +25,13 @@ class LabelAnnotations extends Component {
         {(this.props.labelAnnotations || []).map((label, idx) =>
           <div key={idx} className="label">
             <div className="label-name">
-              {_.capitalize(label.description)}
+              {_.capitalize(label.description)} - {_.round(label.score, 2).toFixed(2)}
             </div>
             <div className="label-score">
               <ProgressBar
                 className="label-score-bar" type="linear" mode="determinate"
                 value={_.round(label.score * 100)}
               />
-              <div className="label-score-value">
-                {_.round(label.score, 2).toFixed(2)}
-              </div>
             </div>
           </div>
         )}
