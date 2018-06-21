@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import ImageView from './ImageView'
 import RenderView from '../containers/RenderViewContainer'
 import InfoLink from './InfoLink'
 import ImageCounter from './ImageCounter'
@@ -45,10 +44,6 @@ class FrontPage extends Component {
       <div >
         <ImageCounter style={style.imageCounter} emitter={emitter} />
         <InfoLink style={style.infoLink} emitter={emitter} />
-        <ImageView
-          emitter={emitter}
-          highlightFaceLandmarks={sidebar.highlightFaceLandmarks}
-        />
         <Sidebar sidebar={sidebar} emitter={emitter} {...sidebarBounds} />
         <RenderView emitter={emitter} />
       </div>

@@ -3,103 +3,69 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { Tab } from 'react-toolbox/lib/tabs/Tab'
-import { Tabs } from 'react-toolbox/lib/tabs/Tabs'
 import Drawer from 'react-toolbox/lib/drawer'
-import FontIcon from 'react-toolbox/lib/font_icon'
 import Button from 'react-toolbox/lib/button'
 import ProgressBar from 'react-toolbox/lib/progress_bar'
 import 'stylesheets/Sidebar'
-import tabStyle from 'react-toolbox/lib/tabs/theme.css'
-import PlusTitle from './PlusTitle'
-import FaceView from './FaceView'
-import Switch from 'react-toolbox/lib/switch'
-import InlineSVG from 'react-inlinesvg'
 import { gcsGoogleStaticMapsApiKey } from '../config.js'
-
 import { getVisionJsonURL } from '../misc/Util.js'
 
-class SidebarTabs extends Tabs {
-  // Copied mainly from the original class, but modified some orders and styles
-  constructor() {
-    super();
-  }
-  render () {
-    let className = tabStyle.root
-    const { headers, contents } = this.parseChildren()
-    if(this.props.className) { className += ` ${this.props.className}` }
-
-    return (
-      <div id='tabs' data-react-toolbox='tabs' className={className}>
-        {this.renderContents(contents)}
-        <nav className={tabStyle.navigation} id='navigation' role='tablist' ref={e => { this.navigationNode = e }}>
-          {this.renderHeaders(headers)}
-        </nav>
-        <span className={tabStyle.pointer}
-              style={_.omit(this.state.pointer, 'top')} />
-      </div>
-    )
-  }
-}
-
-class GraphTab extends Component {
-  constructor(props) {
-    super(props);
-  }
-
+class LabelAnnotations extends Component {
   static get propTypes() {
     return {
-      vision: PropTypes.object.isRequired
+      labelAnnotations: PropTypes.array.isRequired,
     }
   }
 
   render() {
-    const { vision } = this.props
-
-    const getDetectionSection = (key, className, label, callback) => {
-      return key in vision ?
-        <section className={className}>
-          <label className="result-caption">{label}</label>
-          {callback(vision[key])}
-        </section> : ''
-    }
-
-    const getColorStyle = (color) => {
-      const c = color.color
-      return {
-        backgroundColor: `rgb(${c.red}, ${c.green}, ${c.blue})`,
-        flexGrow: color.score * 100
-      }
-    }
-
     return (
-      <div className="tab-graph">
-        {getDetectionSection('labelAnnotations', 'label-detection', 'LABEL', annons =>
-          annons.map((label, idx) =>
-            <div key={idx} className="label">
-              <div className="label-name">
-                {_.capitalize(label.description)}
-              </div>
-              <div className="label-score">
-                <ProgressBar
-                  className="label-score-bar" type="linear" mode="determinate"
-                  value={_.round(label.score * 100)}
-                />
-                <div className="label-score-value">
-                  {_.round(label.score, 2).toFixed(2)}
-                </div>
+      <section className="label-detection">
+        <label className="result-caption">LABEL</label>
+        {(this.props.labelAnnotations || []).map((label, idx) =>
+          <div key={idx} className="label">
+            <div className="label-name">
+              {_.capitalize(label.description)}
+            </div>
+            <div className="label-score">
+              <ProgressBar
+                className="label-score-bar" type="linear" mode="determinate"
+                value={_.round(label.score * 100)}
+              />
+              <div className="label-score-value">
+                {_.round(label.score, 2).toFixed(2)}
               </div>
             </div>
-          )
+          </div>
         )}
-        {getDetectionSection('imagePropertiesAnnotation', 'image-properties', 'COLOR', annon =>
-          <ul>
-            {_.orderBy(annon.dominantColors.colors, ['score'], ['desc']).map((color, idx) =>
-              <li key={idx} style={getColorStyle(color)} />
-            )}
-          </ul>
-        )}
-      </div>
+      </section>
+    )
+  }
+}
+
+class ImageProperties extends Component {
+  static get propTypes() {
+    return {
+      imagePropertiesAnnotation: PropTypes.object.isRequired,
+    }
+  }
+
+  getColorStyle(color) {
+    return {
+      backgroundColor: `rgb(${color.color.red}, ${color.color.green}, ${color.color.blue})`,
+      flexGrow: color.score * 100
+    }
+  }
+
+  render() {
+    return (
+      <section className="image-properties">
+        <label className="result-caption">COLOR</label>
+        <ul>
+          {_.orderBy(((this.props.imagePropertiesAnnotation || {}).dominantColors || {}).colors, ['score'], ['desc']).map((color, idx) =>
+            <li key={idx} style={this.getColorStyle(color)} />
+          )}
+        </ul>
+      </section>
     )
   }
 }
@@ -118,89 +84,109 @@ export default class Sidebar extends Component {
 
   constructor(props, context) {
     super(props, context)
-
     this.state = {
-      vision: {}
+      activeTabs: {
+        label: true,
+        image: false
+      },
+      labelAnnotations: [],
+      imagePropertiesAnnotation: {}
     }
+
+    this.labelAnnotationsTabId = "sidebar__tab-label-annotations"
+    this.imagePropertiesAnnotationTabId = "sidebar__tab-image-properties"
+    this.labelAnnotationsId = "sidebar__label-annotations"
+    this.imagePropertiesAnnotationId = "sidebar__image-properties"
+
+    this.tabChange = this.tabChange.bind(this)
   }
 
-  UNSAFE_componentWillMount() {
-    // Listening on event
+  componentDidMount() {
     this.props.emitter.addListener('showSidebar', (id) => {
+      // Call callback
       this.props.showSidebar()
-      this.setState({ vision: {} }) // Clear results
-      fetch(getVisionJsonURL(id)).then((res) => {
-        return res.json()
-      }).then((data) => {
-        this.setState({ vision: data[0] }) // assuming an array at the moment
+      // Clear results
+      this.setState({
+        labelAnnotations: [],
+        imagePropertiesAnnotation: {}
       })
+      // Update the state
+      fetch(getVisionJsonURL(id))
+        .then((res) => res.json())
+        .then(data => {
+          this.setState({
+            labelAnnotations: data[0].labelAnnotations,
+            imagePropertiesAnnotation: data[0].imagePropertiesAnnotation
+          })
+        })
     })
-
     this.props.emitter.addListener('hideSidebar', () => {
       this.props.hideSidebar()
     })
+  }
+
+  componentDidUpdate(prevProps) {
+    let labelAnnotationsTab = document.getElementById(this.labelAnnotationsTabId)
+    let imagePropertiesTab = document.getElementById(this.imagePropertiesAnnotationTabId)
+    let labelAnnotations = document.getElementById(this.labelAnnotationsId)
+    let imageProperties = document.getElementById(this.imagePropertiesAnnotationId)
+    if (labelAnnotationsTab && imagePropertiesTab && labelAnnotations && imageProperties) {
+      labelAnnotationsTab.addEventListener("click", e => {
+        this.tabChange("label", labelAnnotations)
+      })
+      imagePropertiesTab.addEventListener("click", e => {
+        this.tabChange("image", imageProperties)
+      })
+    }
   }
 
   componentWillUnmount() {
     this.props.emitter.removeAllListeners()
   }
 
+  tabChange(activeTabName, selectedElement) {
+    let currentActiveTabs = this.state.activeTabs
+    for (let key of Object.keys(currentActiveTabs)) {
+      currentActiveTabs[key] = (key === activeTabName) ? true : false
+    }
+    this.setState({
+      activeTabs: currentActiveTabs
+    })
+    selectedElement.scrollIntoView({
+      behavior: "smooth"
+    })
+  }
+
   render() {
     const { sidebar, changeTab } = this.props
-    const classForTab = (index) => {
-      return sidebar.tabIndex === index ? 'active' : ''
-    }
-    const animateScroll = (divid) => {
-      const currentScroll = $('.detail-tab > section').prop('scrollTop')
-      const el = $(`.${divid}`)
-      if (el.length) {
-        let targetScroll = el.position().top
-        targetScroll += currentScroll
-        $('.detail-tab > section').animate({scrollTop: targetScroll}, 'slow')
-      }
-    }
-    const getIndicator = (key, icon, jumpTo, opts) => {
-      const active = key in this.state.vision
-      return (
-        <li
-          className={active ? 'active' : ''}
-          onClick={animateScroll.bind(this, jumpTo)}
-        >
-          {opts && opts.customIcon ?
-            <Button ripple inverse disabled={!active}>
-              <InlineSVG
-                className="custom-icon"
-                src={require(`../../images/icon/${icon}`)}
-              />
-            </Button>
-          :
-            <Button icon={icon} ripple inverse disabled={!active} />
-          }
-        </li>
-      )
-    }
-
     return (
       <Drawer className="sidebar"
               active={sidebar.isActive}
               type="right"
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
 
+        {/* Section boomark tabs */}
         <ul className="feature-indicator">
-          {getIndicator('labelAnnotations', 'label_outline', 'label-detection')}
-          {getIndicator('imagePropertiesAnnotation', 'photo', 'image-properties')}
+          {/* Label Annotations tab */}
+          <li id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'active' : ''}>
+              <Button icon="label" ripple inverse />
+          </li>
+          {/* Image Annotations tab tab */}
+          <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
+              <Button icon="photo" ripple inverse />
+          </li>
         </ul>
 
-        <SidebarTabs className="detail-tab"
-                     index={sidebar.tabIndex}
-                     onChange={changeTab}>
-          <Tab label='Graphical' className={classForTab(0)}>
-            <GraphTab vision={this.state.vision} />
-          </Tab>
-          <Tab label='JSON' className={classForTab(1)}>
-            <pre>{JSON.stringify(this.state.vision, null, 2)}</pre>
-          </Tab>
-        </SidebarTabs>
+        {/* Components */}
+        <div className="sidebar__content-container">
+          <div id={this.labelAnnotationsId} className="sidebar-content">
+            <LabelAnnotations labelAnnotations={this.state.labelAnnotations} />
+          </div>
+          <div id={this.imagePropertiesAnnotationId} className="sidebar-content">
+            <ImageProperties imagePropertiesAnnotation={this.state.imagePropertiesAnnotation} />
+          </div>
+        </div>
+
       </Drawer>
     )
   }
