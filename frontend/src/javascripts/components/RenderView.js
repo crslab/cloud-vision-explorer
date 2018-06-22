@@ -6,6 +6,7 @@ import _        from 'lodash'
 import Shaders  from '../misc/Shaders.js'
 import Random   from 'random-js'
 import { Button } from 'react-toolbox/lib/button';
+import { getSourceImageUrl, getInterpolatedImageUrl } from 'javascripts/api/api.js'
 import dse from 'javascripts/misc/dynamicSliderEvents.js';
 import ce from 'javascripts/misc/clickEvents.js';
 import ClickState, { stages } from 'javascripts/misc/clickState.js';
@@ -114,6 +115,8 @@ class RenderView extends Component{
       if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady){
         this.clickState.preview()
         this.props.emitter.emit('zoomToImage', id, true)
+        let data = this.props.state.getDataFromId(id)
+        this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.z)
       }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
@@ -162,6 +165,9 @@ class RenderView extends Component{
       document.getElementById("render-view__slider").addEventListener(dse.sliderStop, e => {
         this.clickState.stopSlider()
       })
+    }
+    if (this.props.state.interpolate.isDataReady) {
+      this.props.emitter.emit('sidebar-data-ready', getInterpolatedImageUrl(this.props.state.interpolate.result.resultUrl), this.props.state.interpolate.histogram.val)
     }
   }
 
@@ -350,7 +356,7 @@ class RenderView extends Component{
       // as that needs to lerp to its target instead
       const startPoint = camera.position.clone()
 
-      const endPointUnit = ((node || {}).vec || resetPos).clone().normalize() 
+      const endPointUnit = ((node || {}).vec || resetPos).clone().normalize()
       const endPoint = ((node || {}).vec || resetPos).clone() //default for reset button
       if (node) { //if previewing a node, go back 20 units distance away
         endPoint.add(endPointUnit.clone().multiplyScalar(20))

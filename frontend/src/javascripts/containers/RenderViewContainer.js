@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import RenderView from 'javascripts/components/RenderView.js'
-import { actions as interpolateActions, asyncActions as interpolateAsync, isSliderNodesReady, isShowSlider, isCanSelect } from 'javascripts/reducers/interpolate.js';
+import { actions as interpolateActions, asyncActions as interpolateAsync, isSliderNodesReady, isShowSlider, isDataReady, isCanSelect, getDataFromId } from 'javascripts/reducers/interpolate.js';
 
 // gives our component access to state through props.<prop name>
 function mapStateToProps(state) {
@@ -13,7 +13,9 @@ function mapStateToProps(state) {
         histogram: state.interpolate.histogram,
         isSliderNodesReady: isSliderNodesReady(state.interpolate),
         isShowSlider: isShowSlider(state.interpolate),
-        isCanSelect: imgId => isCanSelect(state.interpolate, imgId)
+        isDataReady: isDataReady(state.interpolate),
+        isCanSelect: imgId => isCanSelect(state.interpolate, imgId),
+        getDataFromId: imgId => getDataFromId(state.interpolate, imgId)
       }
     }
   };

@@ -90,7 +90,9 @@ export default class Sidebar extends Component {
       },
       labelAnnotations: [],
       imagePropertiesAnnotation: {},
-      histogramAnnotation: []
+      histogramAnnotation: [],
+      previewImgPath: "",
+      hisotgramData: []
     }
 
     this.labelAnnotationsTabId = "sidebar__tab-label-annotations"
@@ -124,6 +126,12 @@ export default class Sidebar extends Component {
     })
     this.props.emitter.addListener('hideSidebar', () => {
       this.props.hideSidebar()
+    })
+    this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData) => {
+      this.setState({
+        previewImgPath: previewImgPath,
+        hisotgramData: histogramData
+      })
     })
   }
 
