@@ -104,6 +104,7 @@ export default class Sidebar extends Component {
   constructor(props, context) {
     super(props, context)
     this.state = {
+      mode: 'preview',
       activeTabs: {
         preview: true,
         label: false,
@@ -150,10 +151,11 @@ export default class Sidebar extends Component {
     this.props.emitter.addListener('hideSidebar', () => {
       this.props.hideSidebar()
     })
-    this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData) => {
+    this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
       this.setState({
         previewImgPath: previewImgPath,
-        histogramData: histogramData
+        histogramData: histogramData,
+        mode: mode
       })
     })
   }
@@ -167,7 +169,7 @@ export default class Sidebar extends Component {
     let labelAnnotations = document.getElementById(this.labelAnnotationsId)
     let imageProperties = document.getElementById(this.imagePropertiesAnnotationId)
     let histogram = document.getElementById(this.histogramId)
-    if (labelAnnotationsTab && imagePropertiesTab && labelAnnotations && imageProperties) {
+    if (labelAnnotations && imageProperties && ((this.state.mode === 'preview') && (labelAnnotationsTab && imagePropertiesTab))) {
       imgPreviewTab.addEventListener("click", e => {
         this.tabChange("preview", imgPreview)
       })
@@ -233,17 +235,19 @@ export default class Sidebar extends Component {
           <div id={this.imgPreviewId} className="sidebar-content">
             <ImgPreview previewImgPath={this.state.previewImgPath} />
           </div>
-          <div id={this.labelAnnotationsId} className="sidebar-content">
-            <LabelAnnotations labelAnnotations={this.state.labelAnnotations} />
-          </div>
-          <div id={this.imagePropertiesAnnotationId} className="sidebar-content">
-            <ImageProperties imagePropertiesAnnotation={this.state.imagePropertiesAnnotation} />
-          </div>
           {/* Histogram */}
           <div id={this.histogramId} className="sidebar-content">
             {/* <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/> */}
             <RatingsHist arr={this.state.histogramData || [0,0]} />
           </div>
+          {this.state.mode === 'preview' &&
+            <div id={this.labelAnnotationsId} className="sidebar-content">
+              <LabelAnnotations labelAnnotations={this.state.labelAnnotations} />
+            </div>
+            <div id={this.imagePropertiesAnnotationId} className="sidebar-content">
+              <ImageProperties imagePropertiesAnnotation={this.state.imagePropertiesAnnotation} />
+            </div>
+          }
         </div>
 
       </Drawer>

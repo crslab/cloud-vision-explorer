@@ -116,7 +116,7 @@ class RenderView extends Component{
         this.clickState.preview()
         this.props.emitter.emit('zoomToImage', id, true)
         let data = this.props.state.interpolate.getDataFromId(id)
-        this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating)
+        this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating, 'preview')
       }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
@@ -170,7 +170,7 @@ class RenderView extends Component{
       })
     }
     if (this.props.state.interpolate.isDataReady) {
-      this.props.emitter.emit('sidebar-data-ready', this.props.state.interpolate.result.resultUrl, this.props.state.interpolate.histogram.val)
+      this.props.emitter.emit('sidebar-data-ready', this.props.state.interpolate.result.resultUrl, this.props.state.interpolate.histogram.val, 'interpolate')
     }
   }
 
