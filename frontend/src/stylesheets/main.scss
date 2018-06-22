@@ -32,8 +32,8 @@ body {
   }
 
   --overlay-opacity: 0;
-  div[class^="theme--overlay"] {
-    pointer-events: none;
+  [class^="theme--overlay"] {
+    pointer-events: none !important;
   }
 }
 

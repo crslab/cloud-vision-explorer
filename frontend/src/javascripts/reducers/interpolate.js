@@ -284,6 +284,6 @@ export default function reducer(state = initialState, action){
 // Selectors
 export const isSliderNodesReady = state => !isNaN(state.pt1.x) && !isNaN(state.pt1.y) && !isNaN(state.pt2.x) && !isNaN(state.pt2.y)
 export const isShowSlider = state => !isNaN(state.pt1.x) && !isNaN(state.pt1.y) && !isNaN(state.pt2.x) && !isNaN(state.pt2.y) && state.pt1.isImageLoaded && state.pt2.isImageLoaded
-export const isDataReady = state => (state.interpolate.status === statuses.OK) && (state.histogram.status === statuses.OK) && ((state.interpolate.responseUrl || []).length > 0) && ((state.histogram.val || []).length > 0)
+export const isDataReady = state => (state.interpolate.status === statuses.OK) && (state.histogram.status === statuses.OK) && ((state.interpolate.resultUrl || []).length > 0) && ((state.histogram.val || []).length > 0)
 export const isCanSelect = (state, imgId) => (imgId !== state.pt1.imgId) && (imgId !== state.pt2.imgId)
 export const getDataFromId = (state, imgId) =>  data.find(e => e.filename === `${imgId}.jpg`)
