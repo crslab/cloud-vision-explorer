@@ -11,6 +11,23 @@ import { gcsGoogleStaticMapsApiKey } from '../config.js'
 import { getVisionJsonURL } from '../misc/Util.js'
 import RatingsHist from './RatingsHist/RatingsHist.js';
 
+class ImgPreview extends Component {
+  static get propTypes() {
+    return {
+      previewImgPath: PropTypes.string.isRequired,
+    }
+  }
+
+  render () {
+    return (
+      <section className="image-preivew">
+        <label className="result-caption">PREVIEW</label>
+        <img src={this.props.previewImgPath} alt="" />
+      </section>
+    )
+  }
+}
+
 class LabelAnnotations extends Component {
   static get propTypes() {
     return {
@@ -84,7 +101,8 @@ export default class Sidebar extends Component {
     super(props, context)
     this.state = {
       activeTabs: {
-        label: true,
+        preview: true,
+        label: false,
         image: false,
         histogram: false
       },
@@ -95,9 +113,11 @@ export default class Sidebar extends Component {
       hisotgramData: []
     }
 
+    this.imgPreviewTabId =  "sidebar__tab-img-preview"
     this.labelAnnotationsTabId = "sidebar__tab-label-annotations"
     this.imagePropertiesAnnotationTabId = "sidebar__tab-image-properties"
     this.histogramTabId = "sidebar__tab-histogram"
+    this.imgPreviewId =  "sidebar__img-preview"
     this.labelAnnotationsId = "sidebar__label-annotations"
     this.imagePropertiesAnnotationId = "sidebar__image-properties"
     this.histogramId = "sidebar__histogram"
@@ -136,18 +156,26 @@ export default class Sidebar extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    let imgPreviewTab = document.getElementById(this.imgPreviewTabId)
     let labelAnnotationsTab = document.getElementById(this.labelAnnotationsTabId)
     let imagePropertiesTab = document.getElementById(this.imagePropertiesAnnotationTabId)
     let histogramTab = document.getElementById(this.histogramTabId)
+    let imgPreview = document.getElementById(this.imgPreviewId)
     let labelAnnotations = document.getElementById(this.labelAnnotationsId)
     let imageProperties = document.getElementById(this.imagePropertiesAnnotationId)
     let histogram = document.getElementById(this.histogramId)
     if (labelAnnotationsTab && imagePropertiesTab && labelAnnotations && imageProperties) {
+      imgPreviewTab.addEventListener("click", e => {
+        this.tabChange("preview", imgPreview)
+      })
       labelAnnotationsTab.addEventListener("click", e => {
         this.tabChange("label", labelAnnotations)
       })
       imagePropertiesTab.addEventListener("click", e => {
         this.tabChange("image", imageProperties)
+      })
+      histogramTab.addEventListener("click", e => {
+        this.tabChange("histogram", histogram)
       })
     }
   }
@@ -179,13 +207,17 @@ export default class Sidebar extends Component {
 
         {/* Section boomark tabs */}
         <ul className="feature-indicator">
+          {/* Img Preview tab */}
+          <li id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'active' : ''}>
+              <Button icon="photo" ripple inverse />
+          </li>
           {/* Label Annotations tab */}
           <li id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'active' : ''}>
               <Button icon="label" ripple inverse />
           </li>
           {/* Image Annotations tab tab */}
           <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
-              <Button icon="photo" ripple inverse />
+              <Button icon="color_lens" ripple inverse />
           </li>
           {/* Histogram tab */}
           <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
@@ -195,6 +227,9 @@ export default class Sidebar extends Component {
 
         {/* Components */}
         <div className="sidebar__content-container">
+          <div id={this.imgPreviewId} className="sidebar-content">
+            <ImgPreview previewImgPath={this.state.previewImgPath} />
+          </div>
           <div id={this.labelAnnotationsId} className="sidebar-content">
             <LabelAnnotations labelAnnotations={this.state.labelAnnotations} />
           </div>
