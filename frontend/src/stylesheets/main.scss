@@ -30,8 +30,11 @@ body {
       display: none;
     }
   }
-  
+
   --overlay-opacity: 0;
+  div[class^="theme--overlay"] {
+    pointer-events: none;
+  }
 }
 
 pre {
