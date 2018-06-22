@@ -170,7 +170,7 @@ class RenderView extends Component{
       })
     }
     if (this.props.state.interpolate.isDataReady) {
-      this.props.emitter.emit('sidebar-data-ready', getInterpolatedImageUrl(this.props.state.interpolate.result.resultUrl), this.props.state.interpolate.histogram.val)
+      this.props.emitter.emit('sidebar-data-ready', this.props.state.interpolate.result.resultUrl, this.props.state.interpolate.histogram.val)
     }
   }
 
@@ -601,9 +601,9 @@ class RenderView extends Component{
         })
     })
 
-    this.props.emitter.addListener('reset', () => { 
+    this.props.emitter.addListener('reset', () => {
       this.props.emitter.emit('wipeSelected')
-      trackNode() 
+      trackNode()
     })
 
     this.props.emitter.addListener('interpolate-nodes-ready', (n1, n2, openSideBar) => {
