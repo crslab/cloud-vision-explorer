@@ -7,15 +7,17 @@
   color: #ffffff; 
 }
 
-.itemAverage .jss6 {
+.itemAverage div {
+  height: 4vh;
+  border-radius: 5vh;
+}
+
+.itemAverage div span {
   font-size: 2.5vh;
   font-weight: 500;
 }
 
-.itemAverage .jss1 {
-  height: 4vh;
-  border-radius: 5vh;
-}
+
 
 .itemText {
   /* margin-left: 2vw; */
@@ -33,7 +35,8 @@
   align-items: center;
   /* margin-right: 7vw; */
   /* margin-left: 2vw; */
-  /* margin-top: 2vh; */
+  
+  margin-top: 2vh; 
 }
 .itemDivider {
   grid-area: divider;
