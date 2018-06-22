@@ -13,11 +13,9 @@
 }
 
 .itemAverage div span {
-  font-size: 2.5vh;
+  font-size: 2vh;
   font-weight: 500;
 }
-
-
 
 .itemText {
   /* margin-left: 2vw; */
@@ -26,7 +24,7 @@
   grid-area: text;
   
   font-family: Helvetica, Arial, sans-serif;
-  font-size: 2.5vh
+  font-size: 2vh
 }
 .itemHist {
   grid-area: hist;
@@ -35,9 +33,12 @@
   align-items: center;
   /* margin-right: 7vw; */
   /* margin-left: 2vw; */
-  
-  margin-top: 2vh; 
 }
+
+.itemHist div {
+  height: 1vh;
+}
+
 .itemDivider {
   grid-area: divider;
   
@@ -70,7 +71,7 @@
 
 .container {
     display: grid;
-    grid-template-rows: 6vh 2vh 10vh;
+    grid-template-rows: 6vh 2vh 15vh;
     grid-template-columns: 6vw 8vw 1vw; 
   
     grid-template-areas:  
