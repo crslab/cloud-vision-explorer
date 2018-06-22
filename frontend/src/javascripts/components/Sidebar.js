@@ -228,18 +228,22 @@ export default class Sidebar extends Component {
           <li id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'active' : ''}>
               <Button icon="photo" ripple inverse />
           </li>
-          {/* Label Annotations tab */}
-          <li id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'active' : ''}>
-              <Button icon="label" ripple inverse />
-          </li>
-          {/* Image Annotations tab tab */}
-          <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
-              <Button icon="color_lens" ripple inverse />
-          </li>
           {/* Histogram tab */}
           <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
               <Button icon="bar_chart" ripple inverse />
           </li>
+          {this.state.mode === 'preview' &&
+            {/* Label Annotations tab */}
+            <li id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'active' : ''}>
+                <Button icon="label" ripple inverse />
+            </li>
+          }
+          {this.state.mode === 'preview' &&
+            {/* Image Annotations tab tab */}
+            <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
+                <Button icon="color_lens" ripple inverse />
+            </li>
+          }
         </ul>
 
         {/* Components */}
@@ -256,6 +260,8 @@ export default class Sidebar extends Component {
             <div id={this.labelAnnotationsId} className="sidebar-content">
               <LabelAnnotations labelAnnotations={this.state.labelAnnotations} />
             </div>
+          }
+          {this.state.mode === 'preview' &&
             <div id={this.imagePropertiesAnnotationId} className="sidebar-content">
               <ImageProperties imagePropertiesAnnotation={this.state.imagePropertiesAnnotation} />
             </div>
