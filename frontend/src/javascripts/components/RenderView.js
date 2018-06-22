@@ -115,7 +115,7 @@ class RenderView extends Component{
       if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady){
         this.clickState.preview()
         this.props.emitter.emit('zoomToImage', id, true)
-        let data = this.props.state.getDataFromId(id)
+        let data = this.props.state.interpolate.getDataFromId(id)
         this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.z)
       }
     })
