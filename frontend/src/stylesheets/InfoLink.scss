@@ -1,5 +1,19 @@
 .thumbnailImg {
   opacity: 0.9;
+  top: 10px;
+  left: 10px;
+  border: 0px;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.thumbnailImgHighlight {
+  opacity: 0.9;
+  border: 10px solid #4286f4;
+  top: 0px;
+  left: 0px;
 
   &:hover {
     opacity: 1;

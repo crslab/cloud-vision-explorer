@@ -37,7 +37,8 @@ export default class InfoLink extends Component {
     this.state = {
       clickCount: 0,
       nPointsChosen: 0,
-      singleClickTimer: undefined
+      singleClickTimer: undefined,
+      setOfSelected: new Set()
     }
     let thumbnailSize = document.querySelector("body").clientWidth * 0.02222222222
     this.thumbnailWidth = thumbnailSize
@@ -45,6 +46,27 @@ export default class InfoLink extends Component {
     this.FireClick = this.FireClick.bind(this)
     this.singleClick = this.singleClick.bind(this)
     this.doubleClick = this.doubleClick.bind(this)
+    //this.setOfSelected = new Set()
+  }
+
+  componentDidMount() {
+    this.props.emitter.addListener('selectedImg', id => {
+      //this.setOfSelected.add(id)
+      let temp = this.state.setOfSelected
+      temp.add(id)
+      this.setState({
+        setOfSelected: temp
+      })
+      console.log(this.state.setOfSelected.values())
+    })
+    this.props.emitter.addListener('wipeSelected', () => {
+      //this.setOfSelected.clear()
+      let temp = this.state.setOfSelected
+      temp.clear()
+      this.setState({
+        setOfSelected: temp
+      })
+    })
   }
 
   static get propTypes() {
@@ -91,7 +113,7 @@ export default class InfoLink extends Component {
       return (
         <li key={item.id} style={style.imageBookmarks.li}
             onClick={e => this.FireClick(item)}>
-          <img src={getThumbUrl(item.id)} width={this.thumbnailWidth} height={this.thumbnailHeight} className='thumbnailImg' />
+          <img src={getThumbUrl(item.id)} width={this.thumbnailWidth} height={this.thumbnailHeight} className={(this.state.setOfSelected.has(item.id)) ? 'thumbnailImgHighlight' : 'thumbnailImg'}/>
           <br></br>
           <br></br>
           <br></br>

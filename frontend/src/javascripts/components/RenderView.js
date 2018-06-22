@@ -123,6 +123,9 @@ class RenderView extends Component{
       if (!this.props.state.interpolate.isCanSelect(id)) {
         return;
       }
+      if ((this.clickState.stage === stages.SELECTED_1ST) || (this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED)){
+        this.props.emitter.emit('selectedImg', id)
+      }
       this.clickState.select(
         this.props.action.interpolate.addStart,
         this.props.action.interpolate.addEnd,
@@ -598,7 +601,10 @@ class RenderView extends Component{
         })
     })
 
-    this.props.emitter.addListener('reset', () => { trackNode() })
+    this.props.emitter.addListener('reset', () => { 
+      this.props.emitter.emit('wipeSelected')
+      trackNode() 
+    })
 
     this.props.emitter.addListener('interpolate-nodes-ready', (n1, n2, openSideBar) => {
       // Preload the image results JSON file so it'll show instantly
