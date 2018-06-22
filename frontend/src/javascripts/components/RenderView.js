@@ -603,6 +603,7 @@ class RenderView extends Component{
 
     this.props.emitter.addListener('reset', () => { 
       this.props.emitter.emit('wipeSelected')
+      this.props.emitter.emit('hideSidebar')
       trackNode() 
     })
 
