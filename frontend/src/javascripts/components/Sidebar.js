@@ -22,7 +22,7 @@ class ImgPreview extends Component {
     return (
       <section className="image-preivew">
         <label className="result-caption">PREVIEW</label>
-        <img src={this.props.previewImgPath} alt="" />
+        <img className="preview-thumbnail" src={this.props.previewImgPath} alt="" />
       </section>
     )
   }
