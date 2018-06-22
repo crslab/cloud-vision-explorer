@@ -233,13 +233,11 @@ export default class Sidebar extends Component {
               <Button icon="bar_chart" ripple inverse />
           </li>
           {this.state.mode === 'preview' &&
-            {/* Label Annotations tab */}
             <li id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'active' : ''}>
                 <Button icon="label" ripple inverse />
             </li>
           }
           {this.state.mode === 'preview' &&
-            {/* Image Annotations tab tab */}
             <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
                 <Button icon="color_lens" ripple inverse />
             </li>
