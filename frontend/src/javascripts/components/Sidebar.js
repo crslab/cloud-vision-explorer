@@ -24,15 +24,19 @@ class LabelAnnotations extends Component {
         <label className="result-caption">LABEL</label>
         {(this.props.labelAnnotations || []).map((label, idx) =>
           <div key={idx} className="label">
-            <div className="label-name">
-              {_.capitalize(label.description)} - {_.round(label.score, 2).toFixed(2)}
-            </div>
-            <div className="label-score">
-              <ProgressBar
-                className="label-score-bar" type="linear" mode="determinate"
-                value={_.round(label.score * 100)}
-              />
-            </div>
+            {idx < 5 &&
+              <div className="label-name">
+                {_.capitalize(label.description)} - {_.round(label.score, 2).toFixed(2)}
+              </div>
+            }
+            {idx < 5 &&
+              <div className="label-score">
+                <ProgressBar
+                  className="label-score-bar" type="linear" mode="determinate"
+                  value={_.round(label.score * 100)}
+                />
+              </div>
+            }
           </div>
         )}
       </section>
