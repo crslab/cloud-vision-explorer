@@ -112,9 +112,8 @@ export default class Sidebar extends Component {
       },
       labelAnnotations: [],
       imagePropertiesAnnotation: {},
-      histogramAnnotation: [],
       previewImgPath: "",
-      hisotgramData: []
+      histogramData: []
     }
 
     this.imgPreviewTabId =  "sidebar__tab-img-preview"
@@ -154,7 +153,7 @@ export default class Sidebar extends Component {
     this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData) => {
       this.setState({
         previewImgPath: previewImgPath,
-        hisotgramData: histogramData
+        histogramData: histogramData
       })
     })
   }
@@ -242,8 +241,8 @@ export default class Sidebar extends Component {
           </div>
           {/* Histogram */}
           <div id={this.histogramId} className="sidebar-content">
-            {/* <RatingsHist histogramAnnotation={this.state.histogramAnnotation} /> */}
-            <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/>
+            {/* <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/> */}
+            <RatingsHist arr={this.state.histogramData || [0,0]} />
           </div>
         </div>
 
