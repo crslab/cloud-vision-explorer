@@ -150,6 +150,12 @@ export default class Sidebar extends Component {
     })
     this.props.emitter.addListener('hideSidebar', () => {
       this.props.hideSidebar()
+      this.setState({
+        labelAnnotations: [],
+        imagePropertiesAnnotation: {},
+        previewImgPath: "",
+        histogramData: []
+      })
     })
     this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
       this.setState({
@@ -187,6 +193,12 @@ export default class Sidebar extends Component {
 
   componentWillUnmount() {
     this.props.emitter.removeAllListeners()
+    this.setState({
+        labelAnnotations: [],
+        imagePropertiesAnnotation: {},
+        previewImgPath: "",
+        histogramData: []
+    })
   }
 
   tabChange(activeTabName, selectedElement) {
@@ -238,7 +250,7 @@ export default class Sidebar extends Component {
           {/* Histogram */}
           <div id={this.histogramId} className="sidebar-content">
             {/* <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/> */}
-            <RatingsHist arr={this.state.histogramData || [0,0]} />
+            <RatingsHist arr={this.state.histogramData || []} />
           </div>
           {this.state.mode === 'preview' &&
             <div id={this.labelAnnotationsId} className="sidebar-content">

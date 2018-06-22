@@ -17,11 +17,19 @@ class RatingsHist extends React.Component {
             
                 <div className="itemAverage">
                     {/* Chip: multiply average by 5, and concatenate a unicode star */}
-                    <Chip label={(this.props.arr.reduce((acc, val) => acc + val)/this.props.arr.length * 5).toFixed(1) + " \u2605"}/>
+                    <Chip label={
+                        this.props.arr.length ?
+                        (this.props.arr.reduce((acc, val) => acc + val)/this.props.arr.length * 5).toFixed(1) + " \u2605"
+                        : "- \u2605"
+                    }/>
                 </div>
                 
                 <div className="itemText">
-                    <div>{(this.props.arr.reduce((acc, val) => acc + val)/this.props.arr.length * 5).toFixed(1)} of 5 stars</div>
+                    <div>{
+                        this.props.arr.length ?
+                        (this.props.arr.reduce((acc, val) => acc + val)/this.props.arr.length * 5).toFixed(1) + " \u2605"
+                        : "-"
+                    } of 5 stars</div>
                     <div>{this.props.arr.length} ratings</div>
                 </div>
                 
