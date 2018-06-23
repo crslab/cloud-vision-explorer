@@ -798,6 +798,8 @@ class RenderView extends Component{
           if (points[index].plane) {
             lastClickedNodeIndex = index
             this.props.emitter.emit('showSidebar', points[lastClickedNodeIndex].i)
+            let data = this.props.state.interpolate.getDataFromId(points[index].i)
+            this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating, 'preview')
           }
         }
       }
