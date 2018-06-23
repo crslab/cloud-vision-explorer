@@ -121,7 +121,7 @@ class RenderView extends Component{
       if (!this.props.state.interpolate.isCanSelect(id)) {
         return;
       }
-      if ((this.clickState.stage === stages.SELECTED_1ST) || (this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED)){
+      if ((this.clickState.stage === stages.SELECTED_1ST) || (this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST)){
         this.props.emitter.emit('selectedImg', id)
       }
       this.clickState.select(

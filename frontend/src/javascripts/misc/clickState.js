@@ -4,6 +4,7 @@ export const stages = {
   SELECTED_1ST: "SELECTED_1ST",
   SELECTED_2ND: "SELECTED_2ND",
   PREVIEWED: "PREVIEWED",
+  PREVIEWED_AFTER_1ST: "PREVIEWED_AFTER_1ST",
   SLIDER_DISPLAYED: "SLIDER_DISPLAYED",
   INTERPOLATED: "INTERPOLATED",
   SLIDER_MOVING: "SLIDER_MOVING",
@@ -30,6 +31,7 @@ export default class ClickState {
   select(selectStartDispatch, selectEndDispatch, params) {
     switch (this.state.stage) {
       case stages.SELECTED_1ST:
+      case stages.PREVIEWED_AFTER_1ST:
         selectEndDispatch(...params);
         this.state.stage = stages.SELECTED_2ND;
         break;
@@ -44,7 +46,14 @@ export default class ClickState {
   }
 
   preview() {
-    this.state.stage = stages.PREVIEWED;
+    switch(this.state.stage) {
+      case stages.CLEAN:
+        this.state.stage = stages.PREVIEWED;
+        break;
+      case stages.SELECTED_1ST:
+        this.state.stage = stages.PREVIEWED_AFTER_1ST;
+        break;
+    }
   }
 
   displaySlider(pinSliderDispatch, params) {
