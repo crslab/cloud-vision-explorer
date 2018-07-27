@@ -8,6 +8,8 @@ const autoprefixer      = require('autoprefixer')
 module.exports = {
   devtool: 'inline-source-map',
 
+  mode: 'development',
+
   entry: [
     path.resolve(__dirname, path.join('src', 'javascripts', 'main.js'))
   ],
@@ -21,9 +23,16 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)?$/,
-        exclude: [ /node_modules/ ],
+        exclude: [ /node_modules/ , path.resolve(__dirname, path.join('src', 'javascripts', 'web_components'))],
         use: [
           'babel-loader'
+        ]
+      },
+      {
+        test: /\.js$/,
+        exclude: [ /node_modules/ , path.resolve(__dirname, path.join('src', 'javascripts', 'web_components'))],
+        use: [
+          'eslint-loader'
         ]
       },
       {
@@ -78,6 +87,7 @@ module.exports = {
 
 
   plugins: [
+    new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin('[name].css'),
     new webpack.ProvidePlugin({
@@ -90,4 +100,14 @@ module.exports = {
     modules: ['src', 'node_modules']
   },
 
+  devServer: {
+    contentBase: path.join(__dirname, 'build', 'dev'),
+    compress: true,
+    hotOnly: true,
+    open: true,
+    stats: {
+      colors: true
+    },
+    port: 3000
+  }
 }

@@ -5,6 +5,7 @@
      "stage-1"
    ],
    "plugins": [
+     "react-hot-loader/babel",
       "transform-react-constant-elements",
       "transform-object-rest-spread",
       "transform-class-properties",

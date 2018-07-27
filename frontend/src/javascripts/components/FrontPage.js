@@ -10,6 +10,7 @@ import * as sidebarActionCreators from '../actions/sidebar'
 import 'stylesheets/FrontPage'
 import {EventEmitter} from 'fbemitter'
 import BrowserChecker from './BrowserChecker'
+import { hot } from 'react-hot-loader'
 
 const emitter = new EventEmitter()
 
@@ -54,4 +55,4 @@ class FrontPage extends Component {
 function mapStateToProps(state) {
   return { sidebar: state.sidebar }
 }
-export default connect(mapStateToProps)(FrontPage)
+export default hot(module)(connect(mapStateToProps)(FrontPage))
