@@ -24,5 +24,10 @@ ReactDom.render(
       </div>
     </HashRouter>
   </Provider>,
-  document.getElementById('contents')
+  document.getElementById('contents'),
+  document.addEventListener('touchstart', function(e) {
+    if (e.targetTouches.length === 2) {
+      e.preventDefault()
+    }
+  }, {passive: false})
 )
