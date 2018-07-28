@@ -10,6 +10,7 @@ import { getSourceImageUrl, getInterpolatedImageUrl } from 'javascripts/api/api.
 import dse from 'javascripts/misc/dynamicSliderEvents.js';
 import ce from 'javascripts/misc/clickEvents.js';
 import ClickState, { stages } from 'javascripts/misc/clickState.js';
+import Hammer from 'hammerjs';
 
 import { getVisionJsonURL,
          preloadImage }               from '../misc/Util.js'
@@ -821,6 +822,21 @@ class RenderView extends Component{
 
       cameraTargetPosition.add(forwardVec)
     })
+    
+    // Pinch to zoom (in addition to mousewheel)
+    var hammertime = new Hammer(this._container);
+    hammertime.get('pinch').set({ enable: true });
+    hammertime.on("pinch", function(e) {
+      
+      // e.scale is <1 when pinching, >1 when expanding
+      let delta = Math.log(e.scale) * 2.0;
+      
+      const forwardVec = new THREE.Vector3(0, 0, -1)
+      forwardVec.applyQuaternion(camera.quaternion)
+      forwardVec.multiplyScalar(delta)
+
+      cameraTargetPosition.add(forwardVec)
+    });
 
     const m1 = new THREE.Matrix4()
 
