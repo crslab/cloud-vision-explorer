@@ -826,10 +826,13 @@ class RenderView extends Component{
     // Pinch to zoom (in addition to mousewheel)
     var hammertime = new Hammer(this._container);
     hammertime.get('pinch').set({ enable: true });
+
+    let previousScale = 1
     hammertime.on("pinch", function(e) {
-      
+
       // e.scale is <1 when pinching, >1 when expanding
-      let delta = Math.log(e.scale) * 2.0;
+      let delta = Math.log(e.scale/previousScale) * 80.0;
+      previousScale = e.scale
       
       const forwardVec = new THREE.Vector3(0, 0, -1)
       forwardVec.applyQuaternion(camera.quaternion)
@@ -837,6 +840,10 @@ class RenderView extends Component{
 
       cameraTargetPosition.add(forwardVec)
     });
+    
+    hammertime.on("pinchstart", () => {
+        previousScale = 1
+    })
 
     const m1 = new THREE.Matrix4()
 
