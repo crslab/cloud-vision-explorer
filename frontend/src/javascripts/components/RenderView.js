@@ -112,8 +112,8 @@ class RenderView extends Component{
       this.props.emitter.emit('reset')
     })
     this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady){
-        this.clickState.preview()
+      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) ){
+        this.clickState.block()
         this.props.emitter.emit('zoomToImage', id, true)
       }
     })
@@ -593,6 +593,7 @@ class RenderView extends Component{
             return trackNode(_.find(points, (p) => p.i === id))
         })
         .then(() => {
+          this.clickState.preview()
           if (openSideBar) {
             this.props.emitter.emit('showSidebar', id)
             let data = this.props.state.interpolate.getDataFromId(id)
