@@ -49,11 +49,11 @@ export default class ClickState {
 
   preview() {
     switch(this.state.stage) {
-      case stages.CLEAN:
+      //case stages.CLEAN:
       case stages.BLOCKED:
         this.state.stage = stages.PREVIEWED;
         break;
-      case stages.SELECTED_1ST:
+      //case stages.SELECTED_1ST:
       case stages.BLOCKED_AFTER_1ST:
         this.state.stage = stages.PREVIEWED_AFTER_1ST;
         break;
@@ -64,9 +64,9 @@ export default class ClickState {
     switch(this.state.stage) {
       case stages.CLEAN:
       case stages.PREVIEWED:
-      case stages.SELECTED_1ST:
         this.state.stage = stages.BLOCKED;
         break;
+      case stages.SELECTED_1ST:
       case stages.PREVIEWED_AFTER_1ST:
         this.state.stage = stages.BLOCKED_AFTER_1ST;
         break;
