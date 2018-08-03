@@ -70,7 +70,8 @@ const style = {
     fontWeight: 'bold',
     fontSize: '2.4vh',
     top: '4vh',
-    left: '3vh'
+    left: '2.5vh',
+    position: 'absolute'
   }
 }
 
@@ -809,7 +810,7 @@ class RenderView extends Component{
       let delta = 0
 
       if ( event.wheelDelta ) {
-        delta = event.wheelDelta / 40
+        delta = event.wheelDelta / 4
       }
       else if ( event.detail ) {
         delta = - event.detail / 3
