@@ -809,7 +809,7 @@ class RenderView extends Component{
       let delta = 0
 
       if ( event.wheelDelta ) {
-        delta = event.wheelDelta / 40
+        delta = event.wheelDelta / 4
       }
       else if ( event.detail ) {
         delta = - event.detail / 3
