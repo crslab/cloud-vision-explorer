@@ -1,9 +1,11 @@
 .thumbnailImg {
   opacity: 0.9;
-  margin-top: 0px;
-  margin-left: 0px;
-  border: 0px;
-  border-radius: 8px;
+  border: 0.5vh;
+  border-radius: 0.5vh;
+  padding-left: 0.5vh;
+  padding-top: 0.5vh;
+  padding-bottom: 0.5vh;
+  padding-right: 0.5vh;
 
   &:hover {
     opacity: 1;
@@ -12,10 +14,8 @@
 
 .thumbnailImgHighlight {
   opacity: 0.9;
-  border: 10px solid #4286f4;
-  border-radius: 8px;
-  margin-top: -10px;
-  margin-left: -10px;
+  border: 0.5vh solid #4286f4;
+  border-radius: 0.5vh;
 
   &:hover {
     opacity: 1;
