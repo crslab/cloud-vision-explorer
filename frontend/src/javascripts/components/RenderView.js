@@ -106,7 +106,7 @@ class RenderView extends Component{
 
   componentDidMount() {
     document.getElementById("render-view__reset-btn").addEventListener("click", e => {
-      if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST)){
+      if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.SELECTED_2ND)){
         this.clickState.clean(
           this.props.action.interpolate.reset
         )
@@ -114,13 +114,13 @@ class RenderView extends Component{
       }
     })
     this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.BLOCKED_BY_RESET) ){
+      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.BLOCKED_BY_RESET) && (this.clickState.stage !== stages.SELECTED_2ND)){
         this.clickState.block()
         this.props.emitter.emit('zoomToImage', id, true)
       }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isCanSelect(id) || (this.clickState.stage === stages.BLOCKED_BY_RESET)) {
+      if (!this.props.state.interpolate.isCanSelect(id) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND)) {
         return;
       }
       if ((this.clickState.stage === stages.SELECTED_1ST) || (this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST)){
