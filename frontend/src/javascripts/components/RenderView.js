@@ -64,14 +64,13 @@ const textureLoader = new THREE.TextureLoader()
 
 const style = {
   resetButton: {
-    width: 300,
-    height: 140,
+    width: '8vh',
+    height: '4vh',
     backgroundColor: 'red',
     fontWeight: 'bold',
-    fontSize: 90,
+    fontSize: '2.4vh',
     top: '4vh',
-    left: '3.5vh'
-
+    left: '3vh'
   }
 }
 
