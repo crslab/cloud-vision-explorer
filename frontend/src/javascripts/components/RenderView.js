@@ -620,7 +620,10 @@ class RenderView extends Component{
         .then(positionData => {
           this.props.emitter.emit('interpolate-focus-ready', positionData)
           if (openSideBar) {
-            this.props.emitter.emit('showSidebar', 'ppt1_001') // temp hardcode
+            // Initialize the sidebar data to the first image selected
+            this.props.emitter.emit('showSidebar', this.props.state.interpolate.pt1.imgId)
+            let data = this.props.state.interpolate.getDataFromId(this.props.state.interpolate.pt1.imgId)
+            this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating, 'interpolate')
           }
         })
     })
