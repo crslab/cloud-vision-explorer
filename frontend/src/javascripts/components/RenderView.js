@@ -815,6 +815,9 @@ class RenderView extends Component{
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED)){
+        return
+      }
       let delta = 0
 
       if ( event.wheelDelta ) {
