@@ -8,7 +8,9 @@ export const stages = {
   SLIDER_DISPLAYED: "SLIDER_DISPLAYED",
   INTERPOLATED: "INTERPOLATED",
   SLIDER_MOVING: "SLIDER_MOVING",
-  SLIDER_STOPPED: "SLIDER_STOPPED"
+  SLIDER_STOPPED: "SLIDER_STOPPED",
+  BLOCKED: "BLOCKED",
+  BLOCKED_AFTER_1ST: "BLOCKED_AFTER_1ST"
 };
 
 export const isMouseHit = (mouseX, mouseY, x, y, size) => ((mouseX - x)**2)/(size*size/4) +((mouseY - y)**2)/(size*size/4) < 1;
@@ -47,11 +49,26 @@ export default class ClickState {
 
   preview() {
     switch(this.state.stage) {
-      case stages.CLEAN:
+      //case stages.CLEAN:
+      case stages.BLOCKED:
         this.state.stage = stages.PREVIEWED;
         break;
-      case stages.SELECTED_1ST:
+      //case stages.SELECTED_1ST:
+      case stages.BLOCKED_AFTER_1ST:
         this.state.stage = stages.PREVIEWED_AFTER_1ST;
+        break;
+    }
+  }
+
+  block() { //Hope I covered all possible cases...
+    switch(this.state.stage) {
+      case stages.CLEAN:
+      case stages.PREVIEWED:
+        this.state.stage = stages.BLOCKED;
+        break;
+      case stages.SELECTED_1ST:
+      case stages.PREVIEWED_AFTER_1ST:
+        this.state.stage = stages.BLOCKED_AFTER_1ST;
         break;
     }
   }
