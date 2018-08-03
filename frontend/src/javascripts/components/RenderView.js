@@ -70,7 +70,7 @@ const style = {
     fontWeight: 'bold',
     fontSize: '2.4vh',
     top: '4vh',
-    left: '3vh'
+    left: '2.5vh'
   }
 }
 
