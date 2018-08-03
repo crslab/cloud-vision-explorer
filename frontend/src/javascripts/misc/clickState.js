@@ -89,13 +89,20 @@ export default class ClickState {
       .then(() => {
         if (this.state.stage !== stages.SLIDER_STOPPED) {
           interpolateDispatch(...this.state.currentInterpolationParams);
+          this.state.stage = stages.INTERPOLATED;
+          return delay(0);
         }
-        return delay(0);
+        else {
+          throw "Exit current interpolation chain."
+        }
       })
-    this.state.stage = stages.INTERPOLATED;
   }
 
   stopSlider() {
+    this.state.interpolationQueue = this.state.interpolationQueue
+      .catch(err => {
+        console.log(err)
+      })
     this.state.stage = stages.SLIDER_STOPPED;
   }
 
