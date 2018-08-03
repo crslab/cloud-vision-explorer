@@ -22,12 +22,12 @@ const style = {
     },
     li: {
       cursor: 'pointer',
-      marginBottom: '1.5vh'
+      marginBottom: '0.85vh'
     },
     individualThumbnails: {
       width: '4vh',
       height: '4vh',
-      marginLeft: '3vh'
+      marginLeft: '-0.5vh'
     }
   }
 }
