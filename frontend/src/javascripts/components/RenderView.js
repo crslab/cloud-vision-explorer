@@ -444,10 +444,14 @@ class RenderView extends Component{
         ])
       })
       .then(() => {
+        if (currentlyTrackingNode===true){ //If this is true, it means it was from reset button and there is no tracking node
+          this.clickState.unblock_reset()
+        }
+        // For the else condition, where there is actually a tracked node, .preview() will be called later on. Refer to "zoomToImage" listener.
         currentlyZoomedCluster = nodeGroup
         currentlyTrackingNode = null
         console.log("Unblock Now")
-        this.clickState.unblock_reset()
+
         return Promise.resolve()
       })
     }
@@ -837,7 +841,6 @@ class RenderView extends Component{
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
-
       if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
         console.log(this.clickState.stage)
         controls.enablePan = false
