@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const style = {
   testText: {
     color: 'white',
-    backgroundColor: 'red',
+    backgroundColor: '#626262',
     width: '100%',
     height: '100%'
   }

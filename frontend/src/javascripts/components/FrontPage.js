@@ -28,7 +28,7 @@ const style = {
     top: '0vh',
     bottom: '0vh',
     right: '0vh',
-    width: '10vh',
+    width: '12vw',
     zIndex: 100
   },
   imageCounter: {

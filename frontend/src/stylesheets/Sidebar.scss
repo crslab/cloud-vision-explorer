@@ -4,14 +4,19 @@
   --z-index-higher: 10 !important;
 }
 
+.sidebar:hover{
+  overflow-y: auto !important;
+}
+
 .sidebar {
   font-size: 2vh;
-  background: #212121;
+  background: #9e9e9e;
   border: none !important;
-  color: #d9d9d9;
+  color: #ffffff;
   --drawer-mobile-width: 20vw;
   --progress-height: 1vh;
-  right: 10vh !important;
+  right: 12vw !important;
+  overflow: hidden;
 
   ::-webkit-scrollbar {
     width: 1em;
@@ -37,7 +42,7 @@
 
     .sidebar-content{
       padding-bottom: 3vh;
-      color: #a4a4a4;
+      color: #ffffff;
 
       label{
         display: block;
@@ -56,7 +61,6 @@
           display: flex;
           margin: 0;
           padding: 0;
-          border: solid 1px #454545;
         }
 
         li {
