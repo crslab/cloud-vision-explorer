@@ -1,7 +1,7 @@
 @import "./toolbox-theme.scss";
 
-.titleIcon {
-  background-color: rgb(22, 22, 22);
+.title-icon {
+  background-color: #2f2f2f;
   height: 8vh;
 
   button {
@@ -19,9 +19,20 @@
   }
 }
 
-.historyCollection {
+.history-collection {
   color: 'ffffff';
   background-color: #626262;
-  width: 100%;
   height: 100%;
+  padding: 2vh;
+
+  .thumbnail-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .add-thumbnail {
+      width: 9vw;
+      height: 9vw;
+    }
+  }
 }

@@ -11,14 +11,31 @@ class HistoryBar extends Component {
     }
   }
 
+  constructor(props, context) {
+    super(props, context)
+    this.state = {
+      previewImgPath: "",
+    }
+  }
+
+  componentDidMount() {
+    this.props.emitter.addListener('history-img-ready', (imgPath) => {
+      this.setState({
+        previewImgPath: imgPath
+      })
+    })
+  }
+
   render() {
     return (
       <div style={this.props.style}>
-        <div className="titleIcon">
+        <div className="title-icon">
           <Button icon="collections" ripple inverse />
         </div>
-        <div className="historyCollection">
-
+        <div className="history-collection">
+          <div className="thumbnail-container">
+            <img className="add-thumbnail" src={this.state.previewImgPath} alt="" />
+          </div>
         </div>
       </div>
     )

@@ -158,6 +158,7 @@ export default class Sidebar extends Component {
       })
     })
     this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
+      this.props.emitter.emit('history-img-ready', previewImgPath)
       this.setState({
         previewImgPath: previewImgPath,
         histogramData: histogramData,
