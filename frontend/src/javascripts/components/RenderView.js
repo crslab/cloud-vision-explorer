@@ -815,7 +815,7 @@ class RenderView extends Component{
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
-      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED)){
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
         return
       }
       let delta = 0
@@ -837,6 +837,14 @@ class RenderView extends Component{
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
+
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
+        console.log(this.clickState.stage)
+        controls.enablePan = false
+      }
+      else {
+        controls.enablePan = true
+      }
 
       if (!currentlyTrackingNode) {
         controls.enabled = true
