@@ -1,4 +1,5 @@
 import _        from 'lodash'
+import Hammer from 'hammerjs';
 
 export default function FreeLookControls(THREE) {
   THREE.FreeLookControls = function (object, element) {
@@ -15,6 +16,7 @@ export default function FreeLookControls(THREE) {
     this.hasRecentlyRotated = false
 
     this.enabled = true
+    this.enablePan = true
 
     this.orientation = {
       x: 0,
@@ -63,10 +65,8 @@ export default function FreeLookControls(THREE) {
         screenY: event.screenY
       }
 
-      this.orientation.y += movementX * 0.0025
-      this.orientation.x += movementY * 0.0025
+      moveOrientation(movementX, movementY)
 
-      this.orientation.x = Math.max( - PI_2, Math.min( PI_2, this.orientation.x ) )
     }, false )
 
     element.addEventListener( 'mousedown', () => {
@@ -77,5 +77,22 @@ export default function FreeLookControls(THREE) {
       this.holdingDownMouse = false
       previousEvent = null
     }, false)
+
+    const moveOrientation = (movementX, movementY) => {
+      this.orientation.y += movementX * 0.0025
+      this.orientation.x += movementY * 0.0025
+
+      this.orientation.x = Math.max( - PI_2, Math.min( PI_2, this.orientation.x ) )
+    }
+
+    // Add panning on touchscreen
+    var hammertime = new Hammer(element);
+    hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+    hammertime.on("pan", function(e) {
+      if (this.enablePan === true){
+        moveOrientation(e.srcEvent.movementX, e.srcEvent.movementY)
+      }
+    });
+
   }
 }

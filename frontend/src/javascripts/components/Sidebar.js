@@ -10,11 +10,15 @@ import 'stylesheets/Sidebar'
 import { gcsGoogleStaticMapsApiKey } from '../config.js'
 import { getVisionJsonURL } from '../misc/Util.js'
 import RatingsHist from './RatingsHist/RatingsHist.js';
+import ce from 'javascripts/misc/clickEvents.js';
 
 class ImgPreview extends Component {
   static get propTypes() {
     return {
       previewImgPath: PropTypes.string.isRequired,
+      emitter: PropTypes.object.isRequired,
+      id: PropTypes.string.isRequired,
+      zoomEnable: PropTypes.bool.isRequired
     }
   }
 
@@ -23,6 +27,9 @@ class ImgPreview extends Component {
       <section className="image-preivew">
         <label className="result-caption">PREVIEW</label>
         <img className="preview-thumbnail" src={this.props.previewImgPath} alt="" />
+        {this.props.zoomEnable &&
+            <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {this.props.emitter.emit(ce.preview, this.props.id, true)}}/>
+        }
       </section>
     )
   }
@@ -41,12 +48,12 @@ class LabelAnnotations extends Component {
         <label className="result-caption">LABEL</label>
         {(this.props.labelAnnotations || []).map((label, idx) =>
           <div key={idx} className="label">
-            {idx < 5 &&
+            {idx < 3 &&
               <div className="label-name">
                 {_.capitalize(label.description)} - {_.round(label.score, 2).toFixed(2)}
               </div>
             }
-            {idx < 5 &&
+            {idx < 3 &&
               <div className="label-score">
                 <ProgressBar
                   className="label-score-bar" type="linear" mode="determinate"
@@ -113,6 +120,7 @@ export default class Sidebar extends Component {
       },
       labelAnnotations: [],
       imagePropertiesAnnotation: {},
+      id: "",
       previewImgPath: "",
       histogramData: []
     }
@@ -135,6 +143,7 @@ export default class Sidebar extends Component {
       this.props.showSidebar()
       // Clear results
       this.setState({
+        id: id,
         labelAnnotations: [],
         imagePropertiesAnnotation: {}
       })
@@ -223,12 +232,12 @@ export default class Sidebar extends Component {
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
 
         {/* Section boomark tabs */}
-        <ul className="feature-indicator">
-          {/* Img Preview tab */}
+        {/*<ul className="feature-indicator">
+        
           <li id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'active' : ''}>
               <Button icon="photo" ripple inverse />
           </li>
-          {/* Histogram tab */}
+     
           <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
               <Button icon="bar_chart" ripple inverse />
           </li>
@@ -242,13 +251,14 @@ export default class Sidebar extends Component {
                 <Button icon="color_lens" ripple inverse />
             </li>
           }
-        </ul>
+        </ul>*/}
 
         {/* Components */}
         <div className="sidebar__content-container">
           <div id={this.imgPreviewId} className="sidebar-content">
-            <ImgPreview previewImgPath={this.state.previewImgPath} />
+            <ImgPreview emitter={this.props.emitter} zoomEnable={this.state.mode === 'preview'} id={this.state.id} previewImgPath={this.state.previewImgPath} />
           </div>
+          
           {/* Histogram */}
           <div id={this.histogramId} className="sidebar-content">
             {/* <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/> */}

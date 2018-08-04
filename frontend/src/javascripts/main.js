@@ -26,8 +26,14 @@ ReactDom.render(
   </Provider>,
   document.getElementById('contents'),
   document.addEventListener('touchstart', function(e) {
-    if (e.targetTouches.length === 2) {
+    console.log("cT: ",e.changedTouches.length)
+    console.log("tT: ",e.targetTouches.length)
+    console.log("t: ",e.touches.length)
+    if (e.touches.length === 2) {
       e.preventDefault()
     }
-  }, {passive: false})
+  }, {passive: false}),
+  document.addEventListener('contextmenu', function (e) { 
+    e.preventDefault();  
+  })
 )

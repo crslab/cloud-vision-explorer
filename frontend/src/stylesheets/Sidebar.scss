@@ -26,7 +26,7 @@
     flex-direction: column;
     height: 100%;
   }
-
+  
   .sidebar__content-container{
     padding: 3vh;
 
@@ -105,4 +105,11 @@
       }
     }
   }
+  
+  .preview-button {
+      font-size: 1.8vh;
+      height: 3vh;
+      width: 14vw;
+  }
 }
+

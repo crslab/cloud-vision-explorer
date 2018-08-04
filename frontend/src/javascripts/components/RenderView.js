@@ -65,14 +65,14 @@ const textureLoader = new THREE.TextureLoader()
 
 const style = {
   resetButton: {
-    width: 300,
-    height: 140,
+    width: '8vh',
+    height: '4vh',
     backgroundColor: 'red',
     fontWeight: 'bold',
-    fontSize: 90,
+    fontSize: '2.4vh',
     top: '4vh',
-    left: '3.5vh'
-
+    left: '2.5vh',
+    position: 'absolute'
   }
 }
 
@@ -107,19 +107,21 @@ class RenderView extends Component{
 
   componentDidMount() {
     document.getElementById("render-view__reset-btn").addEventListener("click", e => {
-      this.clickState.clean(
-        this.props.action.interpolate.reset
-      )
-      this.props.emitter.emit('reset')
+      if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.SELECTED_2ND)){
+        this.clickState.clean(
+          this.props.action.interpolate.reset
+        )
+        this.props.emitter.emit('reset')
+      }
     })
     this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady){
-        this.clickState.preview()
+      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.BLOCKED_BY_RESET) && (this.clickState.stage !== stages.SELECTED_2ND)){
+        this.clickState.block()
         this.props.emitter.emit('zoomToImage', id, true)
       }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isCanSelect(id)) {
+      if (!this.props.state.interpolate.isCanSelect(id) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND)) {
         return;
       }
       if ((this.clickState.stage === stages.SELECTED_1ST) || (this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST)){
@@ -445,7 +447,8 @@ class RenderView extends Component{
       .then(() => {
         currentlyZoomedCluster = nodeGroup
         currentlyTrackingNode = null
-
+        console.log("Unblock Now")
+        this.clickState.unblock_reset()
         return Promise.resolve()
       })
     }
@@ -594,6 +597,7 @@ class RenderView extends Component{
             return trackNode(_.find(points, (p) => p.i === id))
         })
         .then(() => {
+          this.clickState.preview()
           if (openSideBar) {
             this.props.emitter.emit('showSidebar', id)
             let data = this.props.state.interpolate.getDataFromId(id)
@@ -605,6 +609,8 @@ class RenderView extends Component{
     this.props.emitter.addListener('reset', () => {
       this.props.emitter.emit('wipeSelected')
       this.props.emitter.emit('hideSidebar')
+      console.log("Block Now")
+      this.clickState.block_reset()
       trackNode()
     })
 
@@ -620,7 +626,10 @@ class RenderView extends Component{
         .then(positionData => {
           this.props.emitter.emit('interpolate-focus-ready', positionData)
           if (openSideBar) {
-            this.props.emitter.emit('showSidebar', 'ppt1_001') // temp hardcode
+            // Initialize the sidebar data to the first image selected
+            this.props.emitter.emit('showSidebar', this.props.state.interpolate.pt1.imgId)
+            let data = this.props.state.interpolate.getDataFromId(this.props.state.interpolate.pt1.imgId)
+            this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating, 'interpolate')
           }
         })
     })
@@ -807,10 +816,13 @@ class RenderView extends Component{
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
+        return
+      }
       let delta = 0
 
       if ( event.wheelDelta ) {
-        delta = event.wheelDelta / 40
+        delta = event.wheelDelta / 4
       }
       else if ( event.detail ) {
         delta = - event.detail / 3
@@ -848,6 +860,14 @@ class RenderView extends Component{
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
+
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
+        console.log(this.clickState.stage)
+        controls.enablePan = false
+      }
+      else {
+        controls.enablePan = true
+      }
 
       if (!currentlyTrackingNode) {
         controls.enabled = true

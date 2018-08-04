@@ -22,7 +22,13 @@ const style = {
     },
     li: {
       cursor: 'pointer',
-      marginBottom: 10
+      marginBottom: '2vh'
+    },
+    individualThumbnails: {
+      width: '4vh',
+      height: '4vh',
+      marginLeft: '-0.5vh',
+      borderRadius: '0.5vh'
     }
   }
 }
@@ -113,10 +119,7 @@ export default class InfoLink extends Component {
       return (
         <li key={item.id} style={style.imageBookmarks.li}
             onClick={e => this.FireClick(item)}>
-          <img src={getThumbUrl(item.id)} width={this.thumbnailWidth} height={this.thumbnailHeight} className={(this.state.setOfSelected.has(item.id)) ? 'thumbnailImgHighlight' : 'thumbnailImg'}/>
-          <br></br>
-          <br></br>
-          <br></br>
+          <img src={getThumbUrl(item.id)} style={style.imageBookmarks.individualThumbnails} className={(this.state.setOfSelected.has(item.id)) ? 'thumbnailImgHighlight' : 'thumbnailImg'}/>
         </li>
       )
     })
