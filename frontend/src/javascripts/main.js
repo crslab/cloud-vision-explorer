@@ -32,5 +32,8 @@ ReactDom.render(
     if (e.touches.length === 2) {
       e.preventDefault()
     }
-  }, {passive: false})
+  }, {passive: false}),
+  document.addEventListener('contextmenu', function (e) { 
+    e.preventDefault();  
+  })
 )
