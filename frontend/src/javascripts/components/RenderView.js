@@ -842,7 +842,6 @@ class RenderView extends Component{
 
     const tick = (delta) => {
       if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
-        console.log(this.clickState.stage)
         controls.enablePan = false
       }
       else {

@@ -88,11 +88,12 @@ export default function FreeLookControls(THREE) {
     // Add panning on touchscreen
     var hammertime = new Hammer(element);
     hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-    hammertime.on("pan", function(e) {
+    const orientate = (e) => {
       if (this.enablePan === true){
         moveOrientation(e.srcEvent.movementX, e.srcEvent.movementY)
       }
-    });
+    }
+    hammertime.on("pan", orientate.bind(this));
 
   }
 }
