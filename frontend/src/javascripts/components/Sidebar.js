@@ -17,7 +17,8 @@ class ImgPreview extends Component {
     return {
       previewImgPath: PropTypes.string.isRequired,
       emitter: PropTypes.object.isRequired,
-      id: PropTypes.string.isRequired
+      id: PropTypes.string.isRequired,
+      zoomEnable: PropTypes.bool.isRequired
     }
   }
 
@@ -26,7 +27,9 @@ class ImgPreview extends Component {
       <section className="image-preivew">
         <label className="result-caption">PREVIEW</label>
         <img className="preview-thumbnail" src={this.props.previewImgPath} alt="" />
-        <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {this.props.emitter.emit(ce.preview, this.props.id, true)}}/>
+        {this.props.zoomEnable &&
+            <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {this.props.emitter.emit(ce.preview, this.props.id, true)}}/>
+        }
       </section>
     )
   }
@@ -253,7 +256,7 @@ export default class Sidebar extends Component {
         {/* Components */}
         <div className="sidebar__content-container">
           <div id={this.imgPreviewId} className="sidebar-content">
-            <ImgPreview emitter={this.props.emitter} id={this.state.id} previewImgPath={this.state.previewImgPath} />
+            <ImgPreview emitter={this.props.emitter} zoomEnable={this.state.mode === 'preview'} id={this.state.id} previewImgPath={this.state.previewImgPath} />
           </div>
           
           {/* Histogram */}
