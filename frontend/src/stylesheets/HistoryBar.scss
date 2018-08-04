@@ -19,6 +19,10 @@
   }
 }
 
+.btn-wrapper{
+  background-color: inherit;
+}
+
 .history-collection {
   color: 'ffffff';
   background-color: #626262;
@@ -32,6 +36,7 @@
     background-color: inherit;
     width: 9vw;
     height: 9vw;
+    padding-bottom: 2vh;
 
     .thumbnail {
       z-index: 0;
@@ -39,7 +44,7 @@
       height: 100%;
     }
 
-    .save-btn-overlay{
+    .btn-overlay{
       position: absolute;
       z-index: 1;
       width: inherit;
@@ -48,15 +53,15 @@
       opacity: 0.5;
 
       &:hover{
-        opacity: 0.7;
+        opacity: 0.6;
       }
 
       &:active{
-        opacity: 0.9;
+        opacity: 0.8;
       }
     }
 
-    .save-btn-icon {
+    .btn-icon {
       position: absolute;
       z-index: 2;
       pointer-events: none;

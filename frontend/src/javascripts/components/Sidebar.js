@@ -129,43 +129,43 @@ export default class Sidebar extends Component {
     this.tabChange = this.tabChange.bind(this)
   }
 
-  componentDidMount() {
-    this.props.emitter.addListener('showSidebar', (id) => {
-      // Call callback
-      this.props.showSidebar()
-      // Clear results
-      this.setState({
-        labelAnnotations: [],
-        imagePropertiesAnnotation: {}
-      })
-      // Update the state
-      fetch(getVisionJsonURL(id))
-        .then((res) => res.json())
-        .then(data => {
-          this.setState({
-            labelAnnotations: data[0].labelAnnotations,
-            imagePropertiesAnnotation: data[0].imagePropertiesAnnotation
-          })
+    componentDidMount() {
+      this.props.emitter.addListener('showSidebar', (id) => {
+        // Call callback
+        this.props.showSidebar()
+        // Clear results
+        this.setState({
+          labelAnnotations: [],
+          imagePropertiesAnnotation: {}
         })
-    })
-    this.props.emitter.addListener('hideSidebar', () => {
-      this.props.hideSidebar()
-      this.setState({
-        labelAnnotations: [],
-        imagePropertiesAnnotation: {},
-        previewImgPath: "",
-        histogramData: []
+        // Update the state
+        fetch(getVisionJsonURL(id))
+          .then((res) => res.json())
+          .then(data => {
+            this.setState({
+              labelAnnotations: data[0].labelAnnotations,
+              imagePropertiesAnnotation: data[0].imagePropertiesAnnotation
+            })
+          })
       })
-    })
-    this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
-      this.props.emitter.emit('history-img-ready', previewImgPath)
-      this.setState({
-        previewImgPath: previewImgPath,
-        histogramData: histogramData,
-        mode: mode
+      this.props.emitter.addListener('hideSidebar', () => {
+        this.props.hideSidebar()
+        this.setState({
+          labelAnnotations: [],
+          imagePropertiesAnnotation: {},
+          previewImgPath: "",
+          histogramData: []
+        })
       })
-    })
-  }
+      this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
+        this.props.emitter.emit('history-img-ready', previewImgPath, histogramData)
+        this.setState({
+          previewImgPath: previewImgPath,
+          histogramData: histogramData,
+          mode: mode
+        })
+      })
+    }
 
   componentDidUpdate(prevProps) {
     let imgPreviewTab = document.getElementById(this.imgPreviewTabId)
