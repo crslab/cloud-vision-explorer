@@ -10,6 +10,7 @@ import 'stylesheets/Sidebar'
 import { gcsGoogleStaticMapsApiKey } from '../config.js'
 import { getVisionJsonURL } from '../misc/Util.js'
 import RatingsHist from './RatingsHist/RatingsHist.js';
+import ce from 'javascripts/misc/clickEvents.js';
 
 class ImgPreview extends Component {
   static get propTypes() {
@@ -113,6 +114,7 @@ export default class Sidebar extends Component {
       },
       labelAnnotations: [],
       imagePropertiesAnnotation: {},
+      id: "",
       previewImgPath: "",
       histogramData: []
     }
@@ -135,6 +137,7 @@ export default class Sidebar extends Component {
       this.props.showSidebar()
       // Clear results
       this.setState({
+        id: id,
         labelAnnotations: [],
         imagePropertiesAnnotation: {}
       })
@@ -249,6 +252,7 @@ export default class Sidebar extends Component {
           <div id={this.imgPreviewId} className="sidebar-content">
             <ImgPreview previewImgPath={this.state.previewImgPath} />
           </div>
+          <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {this.props.emitter.emit(ce.preview, this.state.id, true)}}/>
           {/* Histogram */}
           <div id={this.histogramId} className="sidebar-content">
             {/* <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/> */}
