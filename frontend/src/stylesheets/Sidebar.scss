@@ -27,6 +27,10 @@
     height: 100%;
   }
 
+  #sidebar__img-preview{
+    padding-bottom: 0vh;
+  }
+  
   .sidebar__content-container{
     padding: 3vh;
 
@@ -110,7 +114,6 @@
       font-size: 1.8vh;
       height: 3vh;
       width: 14vw;
-      margin-bottom: 3vh;
   }
 }
 
