@@ -3,6 +3,27 @@ import PropTypes from 'prop-types';
 import Button from 'react-toolbox/lib/button'
 import 'stylesheets/HistoryBar'
 
+
+class AddImgToHistory extends Component {
+  static get propTypes() {
+    return {
+      imgPath: PropTypes.string.isRequired,
+    }
+  }
+
+  render () {
+    return (
+      <section className="history-preview">
+        <div className="save-btn-overlay" />
+        <div className="save-btn-icon">
+          <i className="material-icons">save</i>
+        </div>
+        <img className="thumbnail" src={this.props.imgPath} alt="" />
+      </section>
+    )
+  }
+}
+
 class HistoryBar extends Component {
   static get propTypes() {
     return {
@@ -15,6 +36,7 @@ class HistoryBar extends Component {
     super(props, context)
     this.state = {
       previewImgPath: "",
+      history: []
     }
   }
 
@@ -22,6 +44,11 @@ class HistoryBar extends Component {
     this.props.emitter.addListener('history-img-ready', (imgPath) => {
       this.setState({
         previewImgPath: imgPath
+      })
+    })
+    this.props.emitter.addListener('hideSidebar', (imgPath) => {
+      this.setState({
+        previewImgPath: ""
       })
     })
   }
@@ -33,9 +60,9 @@ class HistoryBar extends Component {
           <Button icon="collections" ripple inverse />
         </div>
         <div className="history-collection">
-          <div className="thumbnail-container">
-            <img className="add-thumbnail" src={this.state.previewImgPath} alt="" />
-          </div>
+          {this.state.previewImgPath.length > 0 &&
+            <AddImgToHistory imgPath={this.state.previewImgPath} onClick={e => {console.log("CLICK")}} />
+          }
         </div>
       </div>
     )
