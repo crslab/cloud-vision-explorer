@@ -218,6 +218,7 @@ export default class Sidebar extends Component {
     const { sidebar, changeTab } = this.props
     return (
       <Drawer className="sidebar"
+              theme={{ wrapper: 'wrapper' }}
               active={sidebar.isActive}
               type="right"
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
