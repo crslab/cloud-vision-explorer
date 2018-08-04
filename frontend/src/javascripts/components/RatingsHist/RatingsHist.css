@@ -71,7 +71,7 @@
 
 .container {
     display: grid;
-    grid-template-rows: 6vh 2vh 15vh;
+    grid-template-rows: 6vh 0vh 15vh;
     grid-template-columns: 6vw 8vw 1vw; 
   
     grid-template-areas:  

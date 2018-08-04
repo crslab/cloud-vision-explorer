@@ -48,12 +48,12 @@ class LabelAnnotations extends Component {
         <label className="result-caption">LABEL</label>
         {(this.props.labelAnnotations || []).map((label, idx) =>
           <div key={idx} className="label">
-            {idx < 5 &&
+            {idx < 3 &&
               <div className="label-name">
                 {_.capitalize(label.description)} - {_.round(label.score, 2).toFixed(2)}
               </div>
             }
-            {idx < 5 &&
+            {idx < 3 &&
               <div className="label-score">
                 <ProgressBar
                   className="label-score-bar" type="linear" mode="determinate"
@@ -232,12 +232,12 @@ export default class Sidebar extends Component {
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
 
         {/* Section boomark tabs */}
-        <ul className="feature-indicator">
-          {/* Img Preview tab */}
+        {/*<ul className="feature-indicator">
+        
           <li id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'active' : ''}>
               <Button icon="photo" ripple inverse />
           </li>
-          {/* Histogram tab */}
+     
           <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
               <Button icon="bar_chart" ripple inverse />
           </li>
@@ -251,7 +251,7 @@ export default class Sidebar extends Component {
                 <Button icon="color_lens" ripple inverse />
             </li>
           }
-        </ul>
+        </ul>*/}
 
         {/* Components */}
         <div className="sidebar__content-container">
