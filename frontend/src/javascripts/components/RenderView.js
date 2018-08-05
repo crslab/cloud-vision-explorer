@@ -829,7 +829,7 @@ class RenderView extends Component{
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
-      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND) || (this.clickState.stage === stages.LOADED_1ST_IMG) || (this.clickState.stage === stages.LOADED_2ND_IMG)){
         return
       }
       let delta = 0
