@@ -1,77 +1,38 @@
 @import "./toolbox-theme.scss";
 
+.wrapper{
+  --z-index-higher: 10 !important;
+}
+
 .sidebar {
   font-size: 2vh;
-  background: #212121;
+  background: #9e9e9e;
   border: none !important;
-  color: #d9d9d9;
+  color: #ffffff;
   --drawer-mobile-width: 20vw;
   --progress-height: 1vh;
-
-  ::-webkit-scrollbar {
-    width: 1em;
-    background: #616161;
-  }
-
-  ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #BDBDBD;
-  }
+  right: 12vw !important;
+  overflow: hidden;
 
   aside {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
-  
-  .sidebar__content-container{
-    padding: 3vh;
-
-    .sidebar-content{
-      padding-bottom: 3vh;
-      color: #a4a4a4;
-
-      label{
-        display: block;
-        color: white;
-        padding-bottom: 1vh;
-      }
-
-      .preview-thumbnail {
-        width: 14vw;
-        height: 14vw;
-      }
-
-      .image-properties {
-        ul {
-          list-style-type: none;
-          display: flex;
-          margin: 0;
-          padding: 0;
-          border: solid 1px #454545;
-        }
-
-        li {
-          height: 8vh;
-        }
-      }
-    }
-  }
 
   .feature-indicator {
+    height: 8vh;
     list-style-type: none;
     padding: 0;
     margin: 0;
     display: flex;
 
-    li {
+    .item {
+      flex-grow: 1;
+      min-width: 0;
       text-align: center;
       color: $sidebar-button-off-color-1;
       background: $sidebar-button-off-color-2;
-      flex-grow: 1;
 
       &.active {
         color: $sidebar-button-on-color-1;
@@ -79,6 +40,7 @@
       }
 
       button {
+        display: flex;
         width: 100%;
         height: 8vh;
         min-width: 0;
@@ -105,11 +67,53 @@
       }
     }
   }
-  
-  .preview-button {
-      font-size: 1.8vh;
-      height: 3vh;
-      width: 14vw;
+
+  .sidebar__content-container{
+    height: calc(100% - 8vh);
+    padding: 3vh;
+    overflow: hidden;
+
+    &:hover{
+      overflow-y: auto;
+    }
+
+    &:active{
+      overflow-y: auto;
+    }
+
+    .sidebar-content{
+      padding-bottom: 3vh;
+      color: #ffffff;
+
+      label{
+        display: block;
+        color: white;
+        padding-bottom: 1vh;
+      }
+
+      .preview-thumbnail {
+        width: 14vw;
+        height: 14vw;
+      }
+
+      .preview-button {
+        font-size: 1.8vh;
+        height: 3vh;
+        width: 14vw;
+      }
+
+      .image-properties {
+        ul {
+          list-style-type: none;
+          display: flex;
+          margin: 0;
+          padding: 0;
+        }
+
+        li {
+          height: 8vh;
+        }
+      }
+    }
   }
 }
-
