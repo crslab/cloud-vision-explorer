@@ -435,7 +435,7 @@ class RenderView extends Component{
               bouncingF = TWEEN.Easing.Quadratic.InOut(this.f * 2)
             }
 
-            const distance = qD + zoomOutDistance * bouncingF * angle * 0.2
+            const distance = qD + zoomOutDistance * bouncingF * angle * 0.02
 
             interpolatedPosition.normalize().multiplyScalar(distance)
 
@@ -857,7 +857,7 @@ class RenderView extends Component{
         this.props.emitter.emit('update-lastZoomId', '')
       }
     })
-    
+
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
