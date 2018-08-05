@@ -179,7 +179,7 @@ class RenderView extends Component{
     this.props.emitter.emit('imageCount', points.length)
 
     const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, denseFactor * 10)
-    camera.position.z = denseFactor * 0.6
+    camera.position.z = denseFactor * 0.42
 
     const scene = new THREE.Scene()
 
@@ -351,7 +351,7 @@ class RenderView extends Component{
 
       // Reset lookAtTarget to (0,0,0) when only one image is selected
       lookAtTarget.set(0,0,0)
-      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.6)
+      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.42)
 
       const nodeGroup = clusters[((node || {}).g || 0)]
 
