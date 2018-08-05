@@ -873,6 +873,13 @@ class RenderView extends Component{
         previousScale = 1
     })
 
+    this._container.addEventListener( 'touchend', () => {
+      // Unblock zoom-to-image if user has panned away
+      if (controls.hasRecentlyRotated){
+        this.props.emitter.emit('update-lastZoomId', '')
+      }
+    })
+    
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {

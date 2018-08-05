@@ -54,9 +54,6 @@ export default function FreeLookControls(THREE) {
         }
       }
 
-      this.hasRecentlyRotated = true
-      clearRecentlyRotated()
-
       const movementX = event.screenX - previousEvent.screenX
       const movementY = event.screenY - previousEvent.screenY
 
@@ -79,6 +76,9 @@ export default function FreeLookControls(THREE) {
     }, false)
 
     const moveOrientation = (movementX, movementY) => {
+      this.hasRecentlyRotated = true
+      clearRecentlyRotated()
+
       this.orientation.y += movementX * 0.0025
       this.orientation.x += movementY * 0.0025
 
