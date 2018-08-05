@@ -106,7 +106,7 @@ class RenderView extends Component{
 
   componentDidMount() {
     document.getElementById("render-view__reset-btn").addEventListener("click", e => {
-      if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.SELECTED_2ND)){
+      if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.SELECTED_2ND) && (this.clickState.stage !== stages.SLIDER_DISPLAYED) && (this.clickState.stage !== stages.LOADED_1ST_IMG)){
         this.clickState.clean(
           this.props.action.interpolate.reset
         )
@@ -114,13 +114,13 @@ class RenderView extends Component{
       }
     })
     this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.BLOCKED_BY_RESET) && (this.clickState.stage !== stages.SELECTED_2ND)){
+      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.BLOCKED_BY_RESET) && (this.clickState.stage !== stages.SELECTED_2ND) && (this.clickState.stage !== stages.SLIDER_DISPLAYED) && (this.clickState.stage !== stages.LOADED_1ST_IMG)){
         this.clickState.block()
         this.props.emitter.emit('zoomToImage', id, true)
       }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isCanSelect(id) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND)) {
+      if (!this.props.state.interpolate.isCanSelect(id) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.LOADED_1ST_IMG)) {
         return;
       }
       if ((this.clickState.stage === stages.SELECTED_1ST) || (this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST)){
@@ -143,6 +143,7 @@ class RenderView extends Component{
     })
     this.props.emitter.addListener('interpolate-images-ready', () => {
         this.props.action.interpolate.notifyImagesReady()
+        this.clickState.load_img()
     })
     fetch(DATAPOINT_URL).then((res) => {
       return res.json()
@@ -592,9 +593,9 @@ class RenderView extends Component{
     this.props.emitter.addListener('zoomToImage', (id, openSideBar) => {
       // Preload the image results JSON file so it'll show instantly
       // when the sidebar is opened
-      
+
       this.props.emitter.emit('update-lastZoomId', id)
-      
+
       preloadImage(getVisionJsonURL(id))
 
       cameraAnimationQueue = cameraAnimationQueue
@@ -819,12 +820,12 @@ class RenderView extends Component{
           }
         }
       }
-      
+
       // Unblock zoom-to-image if user has panned away
       if (controls.hasRecentlyRotated){
           this.props.emitter.emit('update-lastZoomId', '')
       }
-      
+
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
@@ -845,7 +846,7 @@ class RenderView extends Component{
       forwardVec.multiplyScalar(delta)
 
       cameraTargetPosition.add(forwardVec)
-      
+
       // Unblock zoom-to-image if user has zoomed away
       this.props.emitter.emit('update-lastZoomId', '')
     })
@@ -853,6 +854,7 @@ class RenderView extends Component{
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
+      //console.log(this.clickState.stage) //This line is great for debugging
       if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
         controls.enablePan = false
       }
