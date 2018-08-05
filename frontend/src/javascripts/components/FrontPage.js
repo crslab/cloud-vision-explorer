@@ -6,6 +6,7 @@ import RenderView from '../containers/RenderViewContainer'
 import InfoLink from './InfoLink'
 import ImageCounter from './ImageCounter'
 import Sidebar from './Sidebar'
+import HistoryBar from './HistoryBar'
 import * as sidebarActionCreators from '../actions/sidebar'
 import 'stylesheets/FrontPage'
 import {EventEmitter} from 'fbemitter'
@@ -20,6 +21,14 @@ const style = {
     top: '10vh', //height of logos on left panel
     left: '5vh',
     width: '2vh',
+    zIndex: 100
+  },
+  historyBar: {
+    position: 'absolute',
+    top: '0vh',
+    bottom: '0vh',
+    right: '0vh',
+    width: '12vw',
     zIndex: 100
   },
   imageCounter: {
@@ -46,6 +55,7 @@ class FrontPage extends Component {
         <ImageCounter style={style.imageCounter} emitter={emitter} />
         <InfoLink style={style.infoLink} emitter={emitter} />
         <Sidebar sidebar={sidebar} emitter={emitter} {...sidebarBounds} />
+        <HistoryBar style={style.historyBar} emitter={emitter} />
         <RenderView emitter={emitter} />
       </div>
     )

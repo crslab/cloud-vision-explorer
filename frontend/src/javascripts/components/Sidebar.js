@@ -17,7 +17,7 @@ class ImgPreview extends Component {
     return {
       previewImgPath: PropTypes.string.isRequired,
       emitter: PropTypes.object.isRequired,
-      id: PropTypes.string.isRequired,
+      currentId: PropTypes.string.isRequired,
       lastZoomId: PropTypes.string.isRequired,
       zoomEnable: PropTypes.bool.isRequired
     }
@@ -30,8 +30,8 @@ class ImgPreview extends Component {
         <img className="preview-thumbnail" src={this.props.previewImgPath} alt="" />
         {this.props.zoomEnable &&
             <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {
-              if( !(this.props.lastZoomId === this.props.id) ){
-                this.props.emitter.emit(ce.preview, this.props.id, true)
+              if( !(this.props.lastZoomId === this.props.currentId) ){
+                this.props.emitter.emit(ce.preview, this.props.currentId, true)
               }
             }}/>
         }
@@ -143,26 +143,30 @@ export default class Sidebar extends Component {
     this.tabChange = this.tabChange.bind(this)
   }
 
-  componentDidMount() {
-    this.props.emitter.addListener('showSidebar', (id) => {
-      // Call callback
-      this.props.showSidebar()
-      // Clear results
-      this.setState({
-        id: id,
-        labelAnnotations: [],
-        imagePropertiesAnnotation: {}
-      })
-      // Update the state
-      fetch(getVisionJsonURL(id))
-        .then((res) => res.json())
-        .then(data => {
-          this.setState({
-            labelAnnotations: data[0].labelAnnotations,
-            imagePropertiesAnnotation: data[0].imagePropertiesAnnotation
-          })
+    componentDidMount() {
+      this.props.emitter.addListener('showSidebar', (id) => {
+        // Call callback
+        this.props.showSidebar()
+        // Simply show the sudebar without anything special if no id is provided
+        if (id === null || id === undefined) {
+          return;
+        }
+        // Clear results
+        this.setState({
+          id,
+          labelAnnotations: [],
+          imagePropertiesAnnotation: {}
         })
-    })
+        // Update the state
+        fetch(getVisionJsonURL(id))
+          .then((res) => res.json())
+          .then(data => {
+            this.setState({
+              labelAnnotations: data[0].labelAnnotations,
+              imagePropertiesAnnotation: data[0].imagePropertiesAnnotation
+            })
+          })
+      })
     this.props.emitter.addListener('hideSidebar', () => {
       this.props.hideSidebar()
       this.setState({
@@ -175,6 +179,7 @@ export default class Sidebar extends Component {
       })
     })
     this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
+      this.props.emitter.emit('history-img-ready', previewImgPath, histogramData, mode)
       this.setState({
         previewImgPath: previewImgPath,
         histogramData: histogramData,
@@ -240,38 +245,39 @@ export default class Sidebar extends Component {
     const { sidebar, changeTab } = this.props
     return (
       <Drawer className="sidebar"
+              theme={{ wrapper: 'wrapper' }}
               active={sidebar.isActive}
               type="right"
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
 
         {/* Section boomark tabs */}
-        {/*<ul className="feature-indicator">
-        
-          <li id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'active' : ''}>
+        <div className="feature-indicator">
+          {/* Img Preview tab */}
+          <div id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'item active' : 'item'}>
               <Button icon="photo" ripple inverse />
-          </li>
-     
-          <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
+          </div>
+          {/* Histogram tab */}
+          <div id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'item active' : 'item'}>
               <Button icon="bar_chart" ripple inverse />
-          </li>
+          </div>
           {this.state.mode === 'preview' &&
-            <li id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'active' : ''}>
+            <div id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'item active' : 'item'}>
                 <Button icon="label" ripple inverse />
-            </li>
+            </div>
           }
           {this.state.mode === 'preview' &&
-            <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
+            <div id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'item active' : 'item'}>
                 <Button icon="color_lens" ripple inverse />
-            </li>
+            </div>
           }
-        </ul>*/}
+        </div>
 
         {/* Components */}
         <div className="sidebar__content-container">
           <div id={this.imgPreviewId} className="sidebar-content">
-            <ImgPreview emitter={this.props.emitter} zoomEnable={this.state.mode === 'preview'} id={this.state.id} lastZoomId={this.state.lastZoomId} previewImgPath={this.state.previewImgPath} />
+            <ImgPreview emitter={this.props.emitter} zoomEnable={this.state.mode === 'preview'} currentId={this.state.id} lastZoomId={this.state.lastZoomId} previewImgPath={this.state.previewImgPath} />
           </div>
-          
+
           {/* Histogram */}
           <div id={this.histogramId} className="sidebar-content">
             {/* <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/> */}
