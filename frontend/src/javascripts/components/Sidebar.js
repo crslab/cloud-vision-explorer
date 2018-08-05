@@ -18,6 +18,7 @@ class ImgPreview extends Component {
       previewImgPath: PropTypes.string.isRequired,
       emitter: PropTypes.object.isRequired,
       id: PropTypes.string.isRequired,
+      lastZoomId: PropTypes.string.isRequired,
       zoomEnable: PropTypes.bool.isRequired
     }
   }
@@ -28,7 +29,11 @@ class ImgPreview extends Component {
         <label className="result-caption">PREVIEW</label>
         <img className="preview-thumbnail" src={this.props.previewImgPath} alt="" />
         {this.props.zoomEnable &&
-            <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {this.props.emitter.emit(ce.preview, this.props.id, true)}}/>
+            <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {
+              if( !(this.props.lastZoomId === this.props.id) ){
+                this.props.emitter.emit(ce.preview, this.props.id, true)
+              }
+            }}/>
         }
       </section>
     )
@@ -121,6 +126,7 @@ export default class Sidebar extends Component {
       labelAnnotations: [],
       imagePropertiesAnnotation: {},
       id: "",
+      lastZoomId: "",
       previewImgPath: "",
       histogramData: []
     }
@@ -160,6 +166,8 @@ export default class Sidebar extends Component {
     this.props.emitter.addListener('hideSidebar', () => {
       this.props.hideSidebar()
       this.setState({
+        id: "",
+        lastZoomId: "",
         labelAnnotations: [],
         imagePropertiesAnnotation: {},
         previewImgPath: "",
@@ -171,6 +179,11 @@ export default class Sidebar extends Component {
         previewImgPath: previewImgPath,
         histogramData: histogramData,
         mode: mode
+      })
+    })
+    this.props.emitter.addListener('update-lastZoomId', (id) => {
+      this.setState({
+        lastZoomId: id,
       })
     })
   }
@@ -256,7 +269,7 @@ export default class Sidebar extends Component {
         {/* Components */}
         <div className="sidebar__content-container">
           <div id={this.imgPreviewId} className="sidebar-content">
-            <ImgPreview emitter={this.props.emitter} zoomEnable={this.state.mode === 'preview'} id={this.state.id} previewImgPath={this.state.previewImgPath} />
+            <ImgPreview emitter={this.props.emitter} zoomEnable={this.state.mode === 'preview'} id={this.state.id} lastZoomId={this.state.lastZoomId} previewImgPath={this.state.previewImgPath} />
           </div>
           
           {/* Histogram */}

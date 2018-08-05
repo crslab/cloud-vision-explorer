@@ -592,6 +592,9 @@ class RenderView extends Component{
     this.props.emitter.addListener('zoomToImage', (id, openSideBar) => {
       // Preload the image results JSON file so it'll show instantly
       // when the sidebar is opened
+      
+      this.props.emitter.emit('update-lastZoomId', id)
+      
       preloadImage(getVisionJsonURL(id))
 
       cameraAnimationQueue = cameraAnimationQueue
@@ -816,6 +819,12 @@ class RenderView extends Component{
           }
         }
       }
+      
+      // Unblock zoom-to-image if user has panned away
+      if (controls.hasRecentlyRotated){
+          this.props.emitter.emit('update-lastZoomId', '')
+      }
+      
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
@@ -836,6 +845,9 @@ class RenderView extends Component{
       forwardVec.multiplyScalar(delta)
 
       cameraTargetPosition.add(forwardVec)
+      
+      // Unblock zoom-to-image if user has zoomed away
+      this.props.emitter.emit('update-lastZoomId', '')
     })
 
     const m1 = new THREE.Matrix4()
