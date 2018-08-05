@@ -133,6 +133,10 @@ export default class Sidebar extends Component {
       this.props.emitter.addListener('showSidebar', (id) => {
         // Call callback
         this.props.showSidebar()
+        // Simply show the sudebar without anything special if no id is provided
+        if (id === null || id === undefined) {
+          return;
+        }
         // Clear results
         this.setState({
           labelAnnotations: [],
@@ -158,7 +162,7 @@ export default class Sidebar extends Component {
         })
       })
       this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
-        this.props.emitter.emit('history-img-ready', previewImgPath, histogramData)
+        this.props.emitter.emit('history-img-ready', previewImgPath, histogramData, mode)
         this.setState({
           previewImgPath: previewImgPath,
           histogramData: histogramData,

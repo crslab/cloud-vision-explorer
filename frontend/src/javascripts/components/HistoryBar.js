@@ -41,6 +41,7 @@ class HistoryBar extends Component {
     super(props, context)
     this.state = {
       current: {
+        mode: "",
         previewImgPath: "",
         histogramData: [],
         ratingsAvg: 0.0
@@ -50,9 +51,10 @@ class HistoryBar extends Component {
   }
 
   componentDidMount() {
-    this.props.emitter.addListener('history-img-ready', (previewImgPath, histogramData) => {
+    this.props.emitter.addListener('history-img-ready', (previewImgPath, histogramData, mode) => {
       this.setState({
         current: {
+          mode,
           previewImgPath,
           histogramData,
           ratingsAvg: (histogramData.reduce((acc, val) => acc + val)/histogramData.length * 5).toFixed(1) + " \u2605"
@@ -62,6 +64,7 @@ class HistoryBar extends Component {
     this.props.emitter.addListener('hideSidebar', (imgPath) => {
       this.setState({
         current: {
+          mode: "",
           previewImgPath: "",
           histogramData: [],
           ratingsAvg: 0.0
@@ -79,7 +82,8 @@ class HistoryBar extends Component {
   }
 
   previewImage(e) {
-    console.log(e)
+    this.props.emitter.emit('showSidebar', null)
+    this.props.emitter.emit('sidebar-data-ready', e.previewImgPath, e.histogramData, '')
   }
 
   render() {
