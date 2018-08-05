@@ -1,5 +1,13 @@
 @import "./toolbox-theme.scss";
 
+.disable-click{
+  pointer-events: none;
+
+  .image-preview{
+    background-color: red !important;
+  }
+}
+
 .title-icon {
   background-color: #2f2f2f;
   height: 8vh;
@@ -102,6 +110,7 @@
     }
 
     .label-preview{
+      font-size: 2vh;
       padding-top: 1vh;
     }
 

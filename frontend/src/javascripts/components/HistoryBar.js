@@ -6,6 +6,7 @@ import 'stylesheets/HistoryBar'
 class HistoryImage extends Component {
   static get propTypes() {
     return {
+      className: PropTypes.string.isRequired,
       imgPath: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
@@ -15,7 +16,7 @@ class HistoryImage extends Component {
 
   render () {
     return (
-      <section className="history-preview" onClick={this.props.itemClickHandle}>
+      <section className={this.props.className + " history-preview"} onClick={this.props.itemClickHandle}>
         <div className="image-preview">
           <div className="btn-overlay" />
           <div className="btn-icon">
@@ -101,10 +102,11 @@ class HistoryBar extends Component {
           }
           {this.state.history.map((img, index) =>
             <HistoryImage key={index}
-                                   imgPath={img.previewImgPath}
-                                   label={img.ratingsAvg}
-                                   icon="visibility"
-                                   itemClickHandle={this.previewImage.bind(this, img)} />
+                          className={this.state.current.mode === "interpolate" ? "disable-click" : ""}
+                          imgPath={img.previewImgPath}
+                          label={img.ratingsAvg}
+                          icon={this.state.current.mode === "interpolate" ? "visibility_off" : "visibility"}
+                          itemClickHandle={this.previewImage.bind(this, img)} />
           )}
         </div>
       </div>

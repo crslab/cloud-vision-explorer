@@ -149,7 +149,6 @@ export default class Sidebar extends Component {
         this.props.showSidebar()
         // Simply show the sudebar without anything special if no id is provided
         if (id === null || id === undefined) {
-          console.log("YO")
           return;
         }
         // Clear results
