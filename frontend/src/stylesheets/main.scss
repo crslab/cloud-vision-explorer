@@ -35,6 +35,19 @@ body {
   [class^="theme--overlay"] {
     pointer-events: none !important;
   }
+
+  ::-webkit-scrollbar {
+    width: 0.5em;
+    background: #616161;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #BDBDBD;
+  }
 }
 
 pre {
