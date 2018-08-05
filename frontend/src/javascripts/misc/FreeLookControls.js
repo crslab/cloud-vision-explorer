@@ -62,7 +62,7 @@ export default function FreeLookControls(THREE) {
         screenY: event.screenY
       }
 
-      moveOrientation(movementX, movementY)
+      //moveOrientation(movementX, movementY)  //at SL, is there any reason for this to exist here?
 
     }, false )
 

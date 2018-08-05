@@ -861,12 +861,12 @@ class RenderView extends Component{
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
-      //console.log(this.clickState.stage) //This line is great for debugging
-      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
-        controls.enablePan = false
+      console.log(this.clickState.stage) //This line is great for debugging
+      if ((this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.SELECTED_1ST)){
+        controls.enablePan = true
       }
       else {
-        controls.enablePan = true
+        controls.enablePan = false
       }
 
       if (!currentlyTrackingNode) {
