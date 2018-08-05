@@ -3,35 +3,11 @@ import PropTypes from 'prop-types';
 import Button from 'react-toolbox/lib/button'
 import 'stylesheets/HistoryBar'
 
-
-class HistoryImg extends Component {
+class HistoryImage extends Component {
   static get propTypes() {
     return {
       imgPath: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
-      icon: PropTypes.string.isRequired
-    }
-  }
-
-  render () {
-    return (
-      <section className="history-preview">
-        <div className="btn-overlay" />
-        <div className="btn-icon">
-          <i className="material-icons">{this.props.icon}</i>
-        </div>
-        <img className="thumbnail" src={this.props.imgPath} alt="" />
-        <br />
-        <div>{this.props.label}</div>
-      </section>
-    )
-  }
-}
-
-class HistoryImgCollection extends Component {
-  static get propTypes() {
-    return {
-      images: PropTypes.array.isRequired,
       icon: PropTypes.string.isRequired,
       itemClickHandle: PropTypes.func.isRequired
     }
@@ -39,15 +15,16 @@ class HistoryImgCollection extends Component {
 
   render () {
     return (
-      <div className="btn-wrapper">
-        {
-          this.props.images.map((img, index) =>
-            <div key={index} className="btn-wrapper" onClick={this.props.itemClickHandle.bind(this, img)}>
-              <HistoryImg imgPath={img.previewImgPath} label={img.ratingsAvg} icon={this.props.icon} />
-            </div>
-          )
-        }
-      </div>
+      <section className="history-preview" onClick={this.props.itemClickHandle}>
+        <div className="image-preview">
+          <div className="btn-overlay" />
+          <div className="btn-icon">
+            <i className="material-icons">{this.props.icon}</i>
+          </div>
+          <img className="thumbnail" src={this.props.imgPath} alt="" />
+        </div>
+        <div className="label-preview">{this.props.label}</div>
+      </section>
     )
   }
 }
@@ -70,7 +47,6 @@ class HistoryBar extends Component {
       },
       history: []
     }
-    this.recordCurrentToHistory = this.recordCurrentToHistory.bind(this)
   }
 
   componentDidMount() {
@@ -94,10 +70,6 @@ class HistoryBar extends Component {
     })
   }
 
-  componentDidUpdate() {
-    console.log(this.state.history)
-  }
-
   recordCurrentToHistory(e) {
     let history = this.state.history
     history.unshift(this.state.current)
@@ -118,11 +90,18 @@ class HistoryBar extends Component {
         </div>
         <div className="history-collection">
           {this.state.current.previewImgPath.length > 0 &&
-            <div className="btn-wrapper" onClick={this.recordCurrentToHistory}>
-              <HistoryImg imgPath={this.state.current.previewImgPath} label={this.state.current.ratingsAvg} icon="save" />
-            </div>
+            <HistoryImage imgPath={this.state.current.previewImgPath}
+                                   label={this.state.current.ratingsAvg}
+                                   icon="save"
+                                   itemClickHandle={this.recordCurrentToHistory.bind(this)} />
           }
-          <HistoryImgCollection images={this.state.history} icon="visibility" itemClickHandle={this.previewImage} />
+          {this.state.history.map((img, index) =>
+            <HistoryImage key={index}
+                                   imgPath={img.previewImgPath}
+                                   label={img.ratingsAvg}
+                                   icon="visibility"
+                                   itemClickHandle={this.previewImage.bind(this, img)} />
+          )}
         </div>
       </div>
     )

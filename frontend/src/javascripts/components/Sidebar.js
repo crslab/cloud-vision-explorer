@@ -225,26 +225,26 @@ export default class Sidebar extends Component {
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
 
         {/* Section boomark tabs */}
-        <ul className="feature-indicator">
+        <div className="feature-indicator">
           {/* Img Preview tab */}
-          <li id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'active' : ''}>
+          <div id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'item active' : 'item'}>
               <Button icon="photo" ripple inverse />
-          </li>
+          </div>
           {/* Histogram tab */}
-          <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
+          <div id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'item active' : 'item'}>
               <Button icon="bar_chart" ripple inverse />
-          </li>
+          </div>
           {this.state.mode === 'preview' &&
-            <li id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'active' : ''}>
+            <div id={this.labelAnnotationsTabId} className={this.state.activeTabs.label ? 'item active' : 'item'}>
                 <Button icon="label" ripple inverse />
-            </li>
+            </div>
           }
           {this.state.mode === 'preview' &&
-            <li id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'active' : ''}>
+            <div id={this.imagePropertiesAnnotationTabId} className={this.state.activeTabs.image ? 'item active' : 'item'}>
                 <Button icon="color_lens" ripple inverse />
-            </li>
+            </div>
           }
-        </ul>
+        </div>
 
         {/* Components */}
         <div className="sidebar__content-container">
