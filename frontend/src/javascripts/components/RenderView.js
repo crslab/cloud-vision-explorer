@@ -179,7 +179,7 @@ class RenderView extends Component{
     this.props.emitter.emit('imageCount', points.length)
 
     const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, denseFactor * 10)
-    camera.position.z = denseFactor * 0.6
+    camera.position.z = denseFactor * 0.42
 
     const scene = new THREE.Scene()
 
@@ -351,7 +351,7 @@ class RenderView extends Component{
 
       // Reset lookAtTarget to (0,0,0) when only one image is selected
       lookAtTarget.set(0,0,0)
-      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.6)
+      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.42)
 
       const nodeGroup = clusters[((node || {}).g || 0)]
 
@@ -444,10 +444,14 @@ class RenderView extends Component{
         ])
       })
       .then(() => {
+        if (currentlyTrackingNode===true){ //If this is true, it means it was from reset button and there is no tracking node
+          this.clickState.unblock_reset()
+        }
+        // For the else condition, where there is actually a tracked node, .preview() will be called later on. Refer to "zoomToImage" listener.
         currentlyZoomedCluster = nodeGroup
         currentlyTrackingNode = null
         console.log("Unblock Now")
-        this.clickState.unblock_reset()
+
         return Promise.resolve()
       })
     }
@@ -588,6 +592,9 @@ class RenderView extends Component{
     this.props.emitter.addListener('zoomToImage', (id, openSideBar) => {
       // Preload the image results JSON file so it'll show instantly
       // when the sidebar is opened
+      
+      this.props.emitter.emit('update-lastZoomId', id)
+      
       preloadImage(getVisionJsonURL(id))
 
       cameraAnimationQueue = cameraAnimationQueue
@@ -812,10 +819,16 @@ class RenderView extends Component{
           }
         }
       }
+      
+      // Unblock zoom-to-image if user has panned away
+      if (controls.hasRecentlyRotated){
+          this.props.emitter.emit('update-lastZoomId', '')
+      }
+      
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
-      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED)){
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
         return
       }
       let delta = 0
@@ -832,11 +845,20 @@ class RenderView extends Component{
       forwardVec.multiplyScalar(delta)
 
       cameraTargetPosition.add(forwardVec)
+      
+      // Unblock zoom-to-image if user has zoomed away
+      this.props.emitter.emit('update-lastZoomId', '')
     })
 
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
+        controls.enablePan = false
+      }
+      else {
+        controls.enablePan = true
+      }
 
       if (!currentlyTrackingNode) {
         controls.enabled = true

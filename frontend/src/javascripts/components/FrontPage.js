@@ -20,7 +20,7 @@ const style = {
     position: 'absolute',
     top: '10vh', //height of logos on left panel
     left: '5vh',
-    width: '20vh',
+    width: '2vh',
     zIndex: 100
   },
   historyBar: {

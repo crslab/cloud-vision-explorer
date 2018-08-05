@@ -10,11 +10,16 @@ import 'stylesheets/Sidebar'
 import { gcsGoogleStaticMapsApiKey } from '../config.js'
 import { getVisionJsonURL } from '../misc/Util.js'
 import RatingsHist from './RatingsHist/RatingsHist.js';
+import ce from 'javascripts/misc/clickEvents.js';
 
 class ImgPreview extends Component {
   static get propTypes() {
     return {
       previewImgPath: PropTypes.string.isRequired,
+      emitter: PropTypes.object.isRequired,
+      id: PropTypes.string.isRequired,
+      lastZoomId: PropTypes.string.isRequired,
+      zoomEnable: PropTypes.bool.isRequired
     }
   }
 
@@ -23,6 +28,13 @@ class ImgPreview extends Component {
       <section className="image-preivew">
         <label className="result-caption">PREVIEW</label>
         <img className="preview-thumbnail" src={this.props.previewImgPath} alt="" />
+        {this.props.zoomEnable &&
+            <Button id="zoom-btn" className="preview-button" label="zoom to image" raised primary onClick={e => {
+              if( !(this.props.lastZoomId === this.props.id) ){
+                this.props.emitter.emit(ce.preview, this.props.id, true)
+              }
+            }}/>
+        }
       </section>
     )
   }
@@ -41,12 +53,12 @@ class LabelAnnotations extends Component {
         <label className="result-caption">LABEL</label>
         {(this.props.labelAnnotations || []).map((label, idx) =>
           <div key={idx} className="label">
-            {idx < 5 &&
+            {idx < 3 &&
               <div className="label-name">
                 {_.capitalize(label.description)} - {_.round(label.score, 2).toFixed(2)}
               </div>
             }
-            {idx < 5 &&
+            {idx < 3 &&
               <div className="label-score">
                 <ProgressBar
                   className="label-score-bar" type="linear" mode="determinate"
@@ -113,6 +125,8 @@ export default class Sidebar extends Component {
       },
       labelAnnotations: [],
       imagePropertiesAnnotation: {},
+      id: "",
+      lastZoomId: "",
       previewImgPath: "",
       histogramData: []
     }
@@ -129,6 +143,7 @@ export default class Sidebar extends Component {
     this.tabChange = this.tabChange.bind(this)
   }
 
+<<<<<<< HEAD
     componentDidMount() {
       this.props.emitter.addListener('showSidebar', (id) => {
         // Call callback
@@ -150,6 +165,25 @@ export default class Sidebar extends Component {
               labelAnnotations: data[0].labelAnnotations,
               imagePropertiesAnnotation: data[0].imagePropertiesAnnotation
             })
+=======
+  componentDidMount() {
+    this.props.emitter.addListener('showSidebar', (id) => {
+      // Call callback
+      this.props.showSidebar()
+      // Clear results
+      this.setState({
+        id: id,
+        labelAnnotations: [],
+        imagePropertiesAnnotation: {}
+      })
+      // Update the state
+      fetch(getVisionJsonURL(id))
+        .then((res) => res.json())
+        .then(data => {
+          this.setState({
+            labelAnnotations: data[0].labelAnnotations,
+            imagePropertiesAnnotation: data[0].imagePropertiesAnnotation
+>>>>>>> master
           })
       })
       this.props.emitter.addListener('hideSidebar', () => {
@@ -160,6 +194,19 @@ export default class Sidebar extends Component {
           previewImgPath: "",
           histogramData: []
         })
+<<<<<<< HEAD
+=======
+    })
+    this.props.emitter.addListener('hideSidebar', () => {
+      this.props.hideSidebar()
+      this.setState({
+        id: "",
+        lastZoomId: "",
+        labelAnnotations: [],
+        imagePropertiesAnnotation: {},
+        previewImgPath: "",
+        histogramData: []
+>>>>>>> master
       })
       this.props.emitter.addListener('sidebar-data-ready', (previewImgPath, histogramData, mode) => {
         this.props.emitter.emit('history-img-ready', previewImgPath, histogramData, mode)
@@ -169,7 +216,17 @@ export default class Sidebar extends Component {
           mode: mode
         })
       })
+<<<<<<< HEAD
     }
+=======
+    })
+    this.props.emitter.addListener('update-lastZoomId', (id) => {
+      this.setState({
+        lastZoomId: id,
+      })
+    })
+  }
+>>>>>>> master
 
   componentDidUpdate(prevProps) {
     let imgPreviewTab = document.getElementById(this.imgPreviewTabId)
@@ -229,6 +286,7 @@ export default class Sidebar extends Component {
               onOverlayClick={() => { this.props.emitter.emit('hideSidebar') }}>
 
         {/* Section boomark tabs */}
+<<<<<<< HEAD
         <div className="feature-indicator">
           {/* Img Preview tab */}
           <div id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'item active' : 'item'}>
@@ -236,6 +294,15 @@ export default class Sidebar extends Component {
           </div>
           {/* Histogram tab */}
           <div id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'item active' : 'item'}>
+=======
+        {/*<ul className="feature-indicator">
+        
+          <li id={this.imgPreviewTabId} className={this.state.activeTabs.preview ? 'active' : ''}>
+              <Button icon="photo" ripple inverse />
+          </li>
+     
+          <li id={this.histogramTabId} className={this.state.activeTabs.histogram ? 'active' : ''}>
+>>>>>>> master
               <Button icon="bar_chart" ripple inverse />
           </div>
           {this.state.mode === 'preview' &&
@@ -248,13 +315,18 @@ export default class Sidebar extends Component {
                 <Button icon="color_lens" ripple inverse />
             </div>
           }
+<<<<<<< HEAD
         </div>
+=======
+        </ul>*/}
+>>>>>>> master
 
         {/* Components */}
         <div className="sidebar__content-container">
           <div id={this.imgPreviewId} className="sidebar-content">
-            <ImgPreview previewImgPath={this.state.previewImgPath} />
+            <ImgPreview emitter={this.props.emitter} zoomEnable={this.state.mode === 'preview'} id={this.state.id} lastZoomId={this.state.lastZoomId} previewImgPath={this.state.previewImgPath} />
           </div>
+          
           {/* Histogram */}
           <div id={this.histogramId} className="sidebar-content">
             {/* <RatingsHist arr={[0.9, 0.7, 0.3, 0.9, 0.9, 0.7, 0.3, 0.9]}/> */}
