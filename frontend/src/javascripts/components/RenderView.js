@@ -106,7 +106,7 @@ class RenderView extends Component{
 
   componentDidMount() {
     document.getElementById("render-view__reset-btn").addEventListener("click", e => {
-      if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.SELECTED_2ND)){
+      if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.SELECTED_2ND) && (this.clickState.stage !== stages.SLIDER_DISPLAYED) && (this.clickState.stage !== stages.LOADED_1ST_IMG)){
         this.clickState.clean(
           this.props.action.interpolate.reset
         )
@@ -114,13 +114,13 @@ class RenderView extends Component{
       }
     })
     this.props.emitter.addListener(ce.preview, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.BLOCKED_BY_RESET) && (this.clickState.stage !== stages.SELECTED_2ND)){
+      if (!this.props.state.interpolate.isShowSlider && !this.props.state.interpolate.isSliderNodesReady && (this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.BLOCKED_BY_RESET) && (this.clickState.stage !== stages.SELECTED_2ND) && (this.clickState.stage !== stages.SLIDER_DISPLAYED) && (this.clickState.stage !== stages.LOADED_1ST_IMG)){
         this.clickState.block()
         this.props.emitter.emit('zoomToImage', id, true)
       }
     })
     this.props.emitter.addListener(ce.select, (id, openSideBar) => {
-      if (!this.props.state.interpolate.isCanSelect(id) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND)) {
+      if (!this.props.state.interpolate.isCanSelect(id) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.LOADED_1ST_IMG)) {
         return;
       }
       if ((this.clickState.stage === stages.SELECTED_1ST) || (this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST)){
@@ -143,6 +143,7 @@ class RenderView extends Component{
     })
     this.props.emitter.addListener('interpolate-images-ready', () => {
         this.props.action.interpolate.notifyImagesReady()
+        this.clickState.load_img()
     })
     fetch(DATAPOINT_URL).then((res) => {
       return res.json()
@@ -434,7 +435,7 @@ class RenderView extends Component{
               bouncingF = TWEEN.Easing.Quadratic.InOut(this.f * 2)
             }
 
-            const distance = qD + zoomOutDistance * bouncingF * angle * 0.2
+            const distance = qD + zoomOutDistance * bouncingF * angle * 0.02
 
             interpolatedPosition.normalize().multiplyScalar(distance)
 
@@ -828,7 +829,7 @@ class RenderView extends Component{
     }, false)
 
     this._container.addEventListener('mousewheel', () => {
-      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
+      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET) || (this.clickState.stage === stages.SELECTED_2ND) || (this.clickState.stage === stages.LOADED_1ST_IMG) || (this.clickState.stage === stages.LOADED_2ND_IMG)){
         return
       }
       let delta = 0
@@ -856,15 +857,16 @@ class RenderView extends Component{
         this.props.emitter.emit('update-lastZoomId', '')
       }
     })
-    
+
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
-      if ((this.clickState.stage === stages.INTERPOLATED) || (this.clickState.stage === stages.SLIDER_DISPLAYED) || (this.clickState.stage === stages.SLIDER_MOVING) || (this.clickState.stage === stages.SLIDER_STOPPED) || (this.clickState.stage === stages.BLOCKED_BY_RESET)){
-        controls.enablePan = false
+      console.log(this.clickState.stage) //This line is great for debugging
+      if ((this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.SELECTED_1ST)){
+        controls.enablePan = true
       }
       else {
-        controls.enablePan = true
+        controls.enablePan = false
       }
 
       if (!currentlyTrackingNode) {

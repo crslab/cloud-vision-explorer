@@ -11,7 +11,9 @@ export const stages = {
   SLIDER_STOPPED: "SLIDER_STOPPED",
   BLOCKED: "BLOCKED",
   BLOCKED_AFTER_1ST: "BLOCKED_AFTER_1ST",
-  BLOCKED_BY_RESET: "BLOCKED_BY_RESET"
+  BLOCKED_BY_RESET: "BLOCKED_BY_RESET",
+  LOADED_1ST_IMG: "LOADED_1ST_IMG",
+  LOADED_2ND_IMG: "LOADED_2ND_IMG"
 };
 
 export const isMouseHit = (mouseX, mouseY, x, y, size) => ((mouseX - x)**2)/(size*size/4) +((mouseY - y)**2)/(size*size/4) < 1;
@@ -80,6 +82,17 @@ export default class ClickState {
 
   unblock_reset() { //This gets called when the promises in trackNode in RenderView.js get resolved, which is at the end of camera operation.
     this.state.stage = stages.CLEAN;
+  }
+
+  load_img() {
+    switch(this.state.stage) {
+      case stages.SLIDER_DISPLAYED: //This reads oddly but, think of "slider displayed" state as more like, attempting to display slider.
+        this.state.stage = stages.LOADED_1ST_IMG;
+        break;
+      case stages.LOADED_1ST_IMG:
+        this.state.stage = stages.LOADED_2ND_IMG;
+        break;
+    }
   }
 
   displaySlider(pinSliderDispatch, params) {
