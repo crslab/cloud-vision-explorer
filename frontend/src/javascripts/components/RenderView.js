@@ -65,13 +65,14 @@ const textureLoader = new THREE.TextureLoader()
 
 const style = {
   resetButton: {
-    width: '8vh',
+    width: '4vh',
     height: '4vh',
     backgroundColor: 'red',
+    borderRadius: '0.5vh',
     fontWeight: 'bold',
     fontSize: '2.4vh',
     top: '4vh',
-    left: '2.5vh',
+    left: '4.5vh',
     position: 'absolute'
   }
 }
@@ -86,7 +87,7 @@ class RenderView extends Component{
     return (
       <div id="render-view__container">
         <div id="render-view__slider-overlay">
-          <Button id="render-view__reset-btn" style={style.resetButton} label="Reset" raised accent />
+          <Button id="render-view__reset-btn" icon="replay" style={style.resetButton} ripple inverse raised accent />
           {this.props.state.interpolate.isShowSlider &&
             <dynamic-slider id="render-view__slider"
                             line-color="white"
