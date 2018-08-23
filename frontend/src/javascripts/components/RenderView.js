@@ -132,6 +132,10 @@ class RenderView extends Component{
         this.props.action.interpolate.addEnd,
         [id]
       )
+      if ((this.clickState.stage === stages.SELECTED_2ND)) {
+        console.log("WTF",this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId)
+        this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, id, true)
+      }
     })
     this.props.emitter.addListener("interpolate-focus-ready", positionData => {
       // Mitigate trackTwoNodees' nested promise's delayed event emitting.
@@ -154,9 +158,9 @@ class RenderView extends Component{
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.clickState.stage === stages.SELECTED_2ND) {
-      this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId, true)
-    }
+    //if (this.clickState.stage === stages.SELECTED_2ND) {
+      //this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId, true)
+    //}
     if (this.props.state.interpolate.isShowSlider) {
       document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
         this.clickState.startSlider()
@@ -533,8 +537,10 @@ class RenderView extends Component{
             f: 0
           }, {
             f: 1
-          }, totalAnimTime, function () {
-
+          }, totalAnimTime/3, function () {
+            //console.log(this.f)
+            //var accelF = this.f
+            //accelF = Math.min(accelF * 5,1);
             const qF = TWEEN.Easing.Quadratic.InOut(this.f)
             const qD = startPointDistance + (endPointDistance - startPointDistance) * qF
 
@@ -554,7 +560,7 @@ class RenderView extends Component{
 
             camera.position.copy(interpolatedPosition)
             cameraTargetPosition.copy(camera.position)
-          }, TWEEN.Easing.Exponential.Out),
+          }, TWEEN.Easing.Linear.None),
         ])
       })
       .then(() => {
@@ -851,7 +857,7 @@ class RenderView extends Component{
       // Unblock zoom-to-image if user has zoomed away
       this.props.emitter.emit('update-lastZoomId', '')
     })
-    
+
     // Pinch to zoom (in addition to mousewheel)
     var hammertime = new Hammer(this._container);
     hammertime.get('pinch').set({ enable: true });
@@ -862,14 +868,14 @@ class RenderView extends Component{
       // e.scale is <1 when pinching, >1 when expanding
       let delta = Math.log(e.scale/previousScale) * 80.0;
       previousScale = e.scale
-      
+
       const forwardVec = new THREE.Vector3(0, 0, -1)
       forwardVec.applyQuaternion(camera.quaternion)
       forwardVec.multiplyScalar(delta)
 
       cameraTargetPosition.add(forwardVec)
     });
-    
+
     hammertime.on("pinchstart", () => {
         previousScale = 1
     })
@@ -884,7 +890,7 @@ class RenderView extends Component{
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
-      console.log(this.clickState.stage) //This line is great for debugging
+      //console.log(this.clickState.stage) //This line is great for debugging
       if ((this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.SELECTED_1ST)){
         controls.enablePan = true
       }
