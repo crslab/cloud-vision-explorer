@@ -65,13 +65,14 @@ const textureLoader = new THREE.TextureLoader()
 
 const style = {
   resetButton: {
-    width: '8vh',
+    width: '4vh',
     height: '4vh',
     backgroundColor: 'red',
+    borderRadius: '0.5vh',
     fontWeight: 'bold',
     fontSize: '2.4vh',
     top: '4vh',
-    left: '2.5vh',
+    left: '4.5vh',
     position: 'absolute'
   }
 }
@@ -86,7 +87,7 @@ class RenderView extends Component{
     return (
       <div id="render-view__container">
         <div id="render-view__slider-overlay">
-          <Button id="render-view__reset-btn" style={style.resetButton} label="Reset" raised accent />
+          <Button id="render-view__reset-btn" icon="replay" style={style.resetButton} ripple inverse raised accent />
           {this.props.state.interpolate.isShowSlider &&
             <dynamic-slider id="render-view__slider"
                             line-color="white"
@@ -132,6 +133,9 @@ class RenderView extends Component{
         this.props.action.interpolate.addEnd,
         [id]
       )
+      if ((this.clickState.stage === stages.SELECTED_2ND)) {
+        this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, id, true)
+      }
     })
     this.props.emitter.addListener("interpolate-focus-ready", positionData => {
       // Mitigate trackTwoNodees' nested promise's delayed event emitting.
@@ -154,9 +158,6 @@ class RenderView extends Component{
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.clickState.stage === stages.SELECTED_2ND) {
-      this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId, true)
-    }
     if (this.props.state.interpolate.isShowSlider) {
       document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
         this.clickState.startSlider()
@@ -181,7 +182,7 @@ class RenderView extends Component{
     this.props.emitter.emit('imageCount', points.length)
 
     const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, denseFactor * 10)
-    camera.position.z = denseFactor * 0.42
+    camera.position.z = denseFactor * 0.65
 
     const scene = new THREE.Scene()
 
@@ -353,7 +354,7 @@ class RenderView extends Component{
 
       // Reset lookAtTarget to (0,0,0) when only one image is selected
       lookAtTarget.set(0,0,0)
-      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.42)
+      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.65)
 
       const nodeGroup = clusters[((node || {}).g || 0)]
 
@@ -533,8 +534,7 @@ class RenderView extends Component{
             f: 0
           }, {
             f: 1
-          }, totalAnimTime, function () {
-
+          }, totalAnimTime/3, function () {
             const qF = TWEEN.Easing.Quadratic.InOut(this.f)
             const qD = startPointDistance + (endPointDistance - startPointDistance) * qF
 
@@ -554,7 +554,7 @@ class RenderView extends Component{
 
             camera.position.copy(interpolatedPosition)
             cameraTargetPosition.copy(camera.position)
-          }, TWEEN.Easing.Exponential.Out),
+          }, TWEEN.Easing.Linear.None),
         ])
       })
       .then(() => {
@@ -851,7 +851,7 @@ class RenderView extends Component{
       // Unblock zoom-to-image if user has zoomed away
       this.props.emitter.emit('update-lastZoomId', '')
     })
-    
+
     // Pinch to zoom (in addition to mousewheel)
     var hammertime = new Hammer(this._container);
     hammertime.get('pinch').set({ enable: true });
@@ -860,16 +860,17 @@ class RenderView extends Component{
     hammertime.on("pinch", function(e) {
 
       // e.scale is <1 when pinching, >1 when expanding
+      console.log(e.type)
       let delta = Math.log(e.scale/previousScale) * 80.0;
       previousScale = e.scale
-      
+
       const forwardVec = new THREE.Vector3(0, 0, -1)
       forwardVec.applyQuaternion(camera.quaternion)
       forwardVec.multiplyScalar(delta)
 
       cameraTargetPosition.add(forwardVec)
     });
-    
+
     hammertime.on("pinchstart", () => {
         previousScale = 1
     })
@@ -884,7 +885,7 @@ class RenderView extends Component{
     const m1 = new THREE.Matrix4()
 
     const tick = (delta) => {
-      console.log(this.clickState.stage) //This line is great for debugging
+      //console.log(this.clickState.stage) //This line is great for debugging
       if ((this.clickState.stage === stages.CLEAN) || (this.clickState.stage === stages.PREVIEWED_AFTER_1ST) || (this.clickState.stage === stages.PREVIEWED) || (this.clickState.stage === stages.SELECTED_1ST)){
         controls.enablePan = true
       }
