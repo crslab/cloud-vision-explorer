@@ -134,7 +134,6 @@ class RenderView extends Component{
         [id]
       )
       if ((this.clickState.stage === stages.SELECTED_2ND)) {
-        console.log("WTF",this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId)
         this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, id, true)
       }
     })
@@ -159,9 +158,6 @@ class RenderView extends Component{
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    //if (this.clickState.stage === stages.SELECTED_2ND) {
-      //this.props.emitter.emit('interpolate-nodes-ready', this.props.state.interpolate.pt1.imgId, this.props.state.interpolate.pt2.imgId, true)
-    //}
     if (this.props.state.interpolate.isShowSlider) {
       document.getElementById("render-view__slider").addEventListener(dse.sliderStart, e => {
         this.clickState.startSlider()
@@ -186,7 +182,7 @@ class RenderView extends Component{
     this.props.emitter.emit('imageCount', points.length)
 
     const camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, denseFactor * 10)
-    camera.position.z = denseFactor * 0.42
+    camera.position.z = denseFactor * 0.65
 
     const scene = new THREE.Scene()
 
@@ -358,7 +354,7 @@ class RenderView extends Component{
 
       // Reset lookAtTarget to (0,0,0) when only one image is selected
       lookAtTarget.set(0,0,0)
-      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.42)
+      const resetPos = new THREE.Vector3(0, 0, denseFactor * 0.65)
 
       const nodeGroup = clusters[((node || {}).g || 0)]
 
@@ -539,9 +535,6 @@ class RenderView extends Component{
           }, {
             f: 1
           }, totalAnimTime/3, function () {
-            //console.log(this.f)
-            //var accelF = this.f
-            //accelF = Math.min(accelF * 5,1);
             const qF = TWEEN.Easing.Quadratic.InOut(this.f)
             const qD = startPointDistance + (endPointDistance - startPointDistance) * qF
 
@@ -867,6 +860,7 @@ class RenderView extends Component{
     hammertime.on("pinch", function(e) {
 
       // e.scale is <1 when pinching, >1 when expanding
+      console.log(e.type)
       let delta = Math.log(e.scale/previousScale) * 80.0;
       previousScale = e.scale
 
