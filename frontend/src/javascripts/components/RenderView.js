@@ -653,6 +653,15 @@ class RenderView extends Component{
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
     }, false)
 
+    const pinchEv = new CustomEvent('pinch')
+
+    this._container.addEventListener('touchstart', (event) => {
+      if (event.touches.length === 2){
+        console.log("ARTIFICIALLY DISPATCH PINCH EVENT NOW FOR HAMMERTIME")
+        this._container.dispatchEvent(pinchEv)
+      }
+    }, false)
+
     const clock = new THREE.Clock()
 
 
