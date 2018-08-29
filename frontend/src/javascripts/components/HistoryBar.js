@@ -6,7 +6,7 @@ import 'stylesheets/HistoryBar'
 class HistoryImage extends Component {
   static get propTypes() {
     return {
-      className: PropTypes.string.isRequired,
+      className: PropTypes.string,
       imgPath: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
