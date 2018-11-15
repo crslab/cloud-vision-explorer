@@ -92,8 +92,8 @@ class RenderView extends Component{
             <dynamic-slider id="render-view__slider"
                             line-color="white"
                             handle-color="pink"
-                            line-thickness="30"
-                            handle-radius="60"
+                            line-thickness="10"
+                            handle-radius="40"
                             x1={this.props.state.interpolate.pt1.x}
                             y1={this.props.state.interpolate.pt1.y}
                             x2={this.props.state.interpolate.pt2.x}
@@ -764,7 +764,7 @@ class RenderView extends Component{
                 let node1 = _.find(points, (p) => p.i === this.props.state.interpolate.pt1.imgId)
                 let node2 = _.find(points, (p) => p.i === this.props.state.interpolate.pt2.imgId)
                 let lineLength = node2.vec.clone().sub(node1.vec).length()
-                nearbyVector.plane.scale.multiplyScalar(denseFactor / 2000 * lineLength) // was 500
+                nearbyVector.plane.scale.multiplyScalar(denseFactor / 5000 * lineLength) // was 500
               } else {
                 nearbyVector.plane.scale.multiplyScalar(denseFactor / 50) // was 500
               }
