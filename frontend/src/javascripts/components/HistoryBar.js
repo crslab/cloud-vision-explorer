@@ -1,23 +1,51 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 import Button from 'react-toolbox/lib/button'
 import 'stylesheets/HistoryBar'
+import ce from 'javascripts/misc/clickEvents.js'
+import { OPEN_IMAGE_BOOKMARK_IDS } from '../misc/Constants.js'
+import { gcsBucketName } from '../config.js'
+
+const getThumbUrl = (id) => {
+  return `https://storage.googleapis.com/${gcsBucketName}/thumbnail/64x64/${id}.jpg`
+}
+
+let defaultImages = OPEN_IMAGE_BOOKMARK_IDS.map(item => ({
+  id: item.id,
+  mode: "preview",
+  previewImgPath: getThumbUrl(item.id),
+  histogramData: [],
+  ratingsAvg: "Sample"
+}))
 
 class HistoryImage extends Component {
   static get propTypes() {
     return {
+      emitter: PropTypes.object.isRequired,
       className: PropTypes.string,
       imgPath: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
-      itemClickHandle: PropTypes.func.isRequired
+      imgData: PropTypes.object,
+      isSelected: PropTypes.bool,
+      addImgHandle: PropTypes.func,
+      clickImgHandle: PropTypes.func
+    }
+  }
+
+  imageClick (e) {
+    if (this.props.addImgHandle) {
+      this.props.addImgHandle(e)
+      return
+    } else if (this.props.clickImgHandle) {
+      this.props.clickImgHandle(this.props.imgData)
     }
   }
 
   render () {
     return (
-      <section className={this.props.className + " history-preview"} onClick={this.props.itemClickHandle}>
-        <div className="image-preview">
+      <section className={this.props.className + " history-preview"} onClick={this.imageClick.bind(this)}>
+        <div className={`image-preview ${this.props.isSelected ? 'image-highlight' : ' '}`}>
           <div className="btn-overlay" />
           <div className="btn-icon">
             <i className="material-icons">{this.props.icon}</i>
@@ -42,19 +70,28 @@ class HistoryBar extends Component {
     super(props, context)
     this.state = {
       current: {
+        id:"",
         mode: "",
         previewImgPath: "",
         histogramData: [],
-        ratingsAvg: 0.0
+        ratingsAvg: 0.0,
+        selected: []
       },
-      history: []
+      history: [...defaultImages],
+      click: {
+        clickCount: 0,
+        singleClickTimer: undefined,
+      }
     }
   }
 
   componentDidMount() {
-    this.props.emitter.addListener('history-img-ready', (previewImgPath, histogramData, mode) => {
+    this.props.emitter.addListener('history-img-ready', (id, previewImgPath, histogramData, mode) => {
       this.setState({
+        ...this.state,
         current: {
+          ...this.state.current,
+          id,
           mode,
           previewImgPath,
           histogramData,
@@ -65,10 +102,12 @@ class HistoryBar extends Component {
     this.props.emitter.addListener('hideSidebar', (imgPath) => {
       this.setState({
         current: {
+          id: "",
           mode: "",
           previewImgPath: "",
-          histogramData: [],
-          ratingsAvg: 0.0
+          histogramData: [...defaultImages],
+          ratingsAvg: 0.0,
+          selected: []
         }
       })
     })
@@ -82,31 +121,95 @@ class HistoryBar extends Component {
     })
   }
 
+  resolveClick (img) {
+    let updatedClickCount = this.state.click.clickCount + 1
+    switch (updatedClickCount) {
+      case 1:
+        let self = this
+        let singleClickTimer = setTimeout(() => {
+            self.setState({
+              ...self.state,
+              click: {
+                clickCount: 0,
+                singleClickTimer: undefined,
+              }
+            })
+            self.previewImage(img)
+        }, 400)
+        this.setState({
+          ...this.state,
+          click: {
+            clickCount: updatedClickCount,
+            singleClickTimer: singleClickTimer
+          }
+        })
+        return 1
+      case 2:
+        clearTimeout(this.state.click.singleClickTimer)
+        this.setState({
+          ...this.state,
+          click: {
+            clickCount: 0,
+            singleClickTimer: undefined,
+          }
+        })
+        this.selectImage(img)
+        return 2
+      default:
+        return
+    }
+  }
+
   previewImage(e) {
-    this.props.emitter.emit('showSidebar', null)
-    this.props.emitter.emit('sidebar-data-ready', e.previewImgPath, e.histogramData, '')
+    if (e.id) {
+      this.props.emitter.emit(ce.preview, e.id, true)
+    } else {
+      this.props.emitter.emit('showSidebar', null)
+      this.props.emitter.emit('sidebar-data-ready', e.id, e.previewImgPath, e.histogramData, "interpolate-review")
+    }
+  }
+
+  selectImage(e) {
+    let selectedImages = this.state.current.selected
+    selectedImages.unshift(e.id)
+    this.setState({
+      ...this.state,
+      current: {
+        ...this.state.current,
+        selected: selectedImages
+      }
+    })
+    this.props.emitter.emit(ce.select, e.id, true)
+  }
+
+  reset(e) {
+    this.props.emitter.emit(ce.resetBtn, true)
   }
 
   render() {
     return (
       <div style={this.props.style}>
         <div className="title-icon">
-          <Button icon="collections" ripple inverse />
+          <Button id="render-view__reset-btn" icon="replay" onClick={this.reset.bind(this)} ripple inverse raised accent />
         </div>
         <div className="history-collection">
           {this.state.current.previewImgPath.length > 0 &&
             <HistoryImage imgPath={this.state.current.previewImgPath}
                                    label={this.state.current.ratingsAvg}
                                    icon="save"
-                                   itemClickHandle={this.recordCurrentToHistory.bind(this)} />
+                                   addImgHandle={this.recordCurrentToHistory.bind(this)}
+                                   emitter={this.props.emitter} />
           }
           {this.state.history.map((img, index) =>
             <HistoryImage key={index}
                           className={this.state.current.mode === "interpolate" ? "disable-click" : ""}
                           imgPath={img.previewImgPath}
                           label={img.ratingsAvg}
-                          icon={this.state.current.mode === "interpolate" ? "visibility_off" : "visibility"}
-                          itemClickHandle={this.previewImage.bind(this, img)} />
+                          icon={this.state.current.mode === "interpolate" ? "visibility_off" : img.mode === "preview" ? "filter": "visibility"}
+                          imgData={img}
+                          isSelected={this.state.current.selected.includes(img.id)}
+                          clickImgHandle={this.resolveClick.bind(this)}
+                          emitter={this.props.emitter} />
           )}
         </div>
       </div>

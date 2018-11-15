@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import RenderView from '../containers/RenderViewContainer'
-import InfoLink from './InfoLink'
 import ImageCounter from './ImageCounter'
 import Sidebar from './Sidebar'
 import HistoryBar from './HistoryBar'
@@ -16,25 +15,13 @@ import { hot } from 'react-hot-loader'
 const emitter = new EventEmitter()
 
 const style = {
-  infoLink: {
-    position: 'absolute',
-    top: '10vh', //height of logos on left panel
-    left: '5vh',
-    width: '2vh',
-    zIndex: 100
-  },
   historyBar: {
     position: 'absolute',
     top: '0vh',
     bottom: '0vh',
-    right: '0vh',
+    left: '0vh',
     width: '5vw',
     zIndex: 100
-  },
-  imageCounter: {
-    position: 'absolute',
-    bottom: '1vh',
-    left: '2vh',
   }
 }
 
@@ -52,8 +39,6 @@ class FrontPage extends Component {
 
     return (
       <div >
-        <ImageCounter style={style.imageCounter} emitter={emitter} />
-        <InfoLink style={style.infoLink} emitter={emitter} />
         <Sidebar sidebar={sidebar} emitter={emitter} {...sidebarBounds} />
         <HistoryBar style={style.historyBar} emitter={emitter} />
         <RenderView emitter={emitter} />

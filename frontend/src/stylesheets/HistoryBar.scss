@@ -5,15 +5,13 @@
 }
 
 .title-icon {
-  background-color: #2f2f2f;
-  height: 4vh;
+  height: 5vh;
 
   button {
     width: 100%;
-    height: 4vh;
+    height: 5vh;
     min-width: 0;
     border-radius: 0;
-    color: $sidebar-button-off-color-1 !important;
 
     .material-icons {
       line-height: 1em;
@@ -56,6 +54,10 @@
     height: auto;
 
     padding-bottom: 2vh;
+
+    .image-highlight {
+      box-shadow: 0vh 0vh 0vh 2vh #4286f4;
+    }
 
     .image-preview{
       display: flex;

@@ -64,17 +64,6 @@ const wait = (time) => new Promise((resolve) => setTimeout(resolve, time))
 const textureLoader = new THREE.TextureLoader()
 
 const style = {
-  resetButton: {
-    width: '4vh',
-    height: '4vh',
-    backgroundColor: 'red',
-    borderRadius: '0.5vh',
-    fontWeight: 'bold',
-    fontSize: '2.4vh',
-    top: '4vh',
-    left: '4.5vh',
-    position: 'absolute'
-  }
 }
 
 class RenderView extends Component{
@@ -87,7 +76,6 @@ class RenderView extends Component{
     return (
       <div id="render-view__container">
         <div id="render-view__slider-overlay">
-          <Button id="render-view__reset-btn" icon="replay" style={style.resetButton} ripple inverse raised accent />
           {this.props.state.interpolate.isShowSlider &&
             <dynamic-slider id="render-view__slider"
                             line-color="white"
@@ -107,7 +95,7 @@ class RenderView extends Component{
   }
 
   componentDidMount() {
-    document.getElementById("render-view__reset-btn").addEventListener("click", e => {
+    this.props.emitter.addListener(ce.resetBtn, () => {
       if ((this.clickState.stage !== stages.BLOCKED) && (this.clickState.stage !== stages.BLOCKED_AFTER_1ST) && (this.clickState.stage !== stages.SELECTED_2ND) && (this.clickState.stage !== stages.SLIDER_DISPLAYED) && (this.clickState.stage !== stages.LOADED_1ST_IMG)){
         this.clickState.clean(
           this.props.action.interpolate.reset
@@ -173,7 +161,7 @@ class RenderView extends Component{
       })
     }
     if (this.props.state.interpolate.isDataReady) {
-      this.props.emitter.emit('sidebar-data-ready', this.props.state.interpolate.result.resultUrl, this.props.state.interpolate.histogram.val, 'interpolate')
+      this.props.emitter.emit('sidebar-data-ready', null, this.props.state.interpolate.result.resultUrl, this.props.state.interpolate.histogram.val, 'interpolate')
     }
   }
 
@@ -609,7 +597,7 @@ class RenderView extends Component{
           if (openSideBar) {
             this.props.emitter.emit('showSidebar', id)
             let data = this.props.state.interpolate.getDataFromId(id)
-            this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating, 'preview')
+            this.props.emitter.emit('sidebar-data-ready', id, getSourceImageUrl(data.filename), data.rating, 'preview')
           }
         })
     })
@@ -637,7 +625,7 @@ class RenderView extends Component{
             // Initialize the sidebar data to the first image selected
             this.props.emitter.emit('showSidebar', this.props.state.interpolate.pt1.imgId)
             let data = this.props.state.interpolate.getDataFromId(this.props.state.interpolate.pt1.imgId)
-            this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating, 'interpolate')
+            this.props.emitter.emit('sidebar-data-ready', null, getSourceImageUrl(data.filename), data.rating, 'interpolate')
           }
         })
     })
@@ -817,7 +805,7 @@ class RenderView extends Component{
             lastClickedNodeIndex = index
             this.props.emitter.emit('showSidebar', points[lastClickedNodeIndex].i)
             let data = this.props.state.interpolate.getDataFromId(points[index].i)
-            this.props.emitter.emit('sidebar-data-ready', getSourceImageUrl(data.filename), data.rating, 'preview')
+            this.props.emitter.emit('sidebar-data-ready', points[index].i, getSourceImageUrl(data.filename), data.rating, 'preview')
           }
         }
       }
