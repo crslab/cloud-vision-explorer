@@ -8,6 +8,7 @@
 }
 
 .itemAverage div {
+  margin-top: 1vh;
   height: 3vh;
   border-radius: 3vh;
 }
@@ -19,7 +20,7 @@
 
 .itemText {
   /* margin-left: 2vw; */
-  /* margin-top: 1vh; */
+  margin-top: 1vh;
   text-align: left;
   grid-area: text;
   
