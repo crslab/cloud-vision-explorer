@@ -8,12 +8,12 @@
 }
 
 .itemAverage div {
-  height: 4vh;
-  border-radius: 5vh;
+  height: 3vh;
+  border-radius: 3vh;
 }
 
 .itemAverage div span {
-  font-size: 2vh;
+  font-size: 1.5vh;
   font-weight: 500;
 }
 
@@ -24,7 +24,7 @@
   grid-area: text;
   
   font-family: Helvetica, Arial, sans-serif;
-  font-size: 1.5vh
+  font-size: 1.2vh
 }
 .itemHist {
   grid-area: hist;

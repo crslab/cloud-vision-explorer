@@ -6,6 +6,7 @@
 
 .sidebar {
   font-size: 1.5vh;
+  width: 15vw;
   background: #9e9e9e;
   border: none !important;
   color: #ffffff;
@@ -69,7 +70,8 @@
   }
 
   .sidebar__content-container{
-    height: calc(100% - 8vh);
+    height: calc(100% - 4vh);
+    width: 15vw;
     padding: 3vh;
     overflow: hidden;
 
@@ -82,8 +84,10 @@
     }
 
     .sidebar-content{
-      padding-bottom: 3vh;
+      
       color: #ffffff;
+      padding-top: 2vh;
+      padding-bottom: 4vh;
 
       label{
         display: block;
@@ -92,14 +96,14 @@
       }
 
       .preview-thumbnail {
-        width: 9vw;
-        height: 9vw;
+        width: 11vw;
+        height: 11vw;
       }
 
       .preview-button {
         font-size: 1.4vh;
         height: 2vh;
-        width: 9vw;
+        width: 11vw;
       }
 
       .image-properties {
@@ -111,7 +115,7 @@
         }
 
         li {
-          height: 8vh;
+          height: 6vh;
         }
       }
     }
