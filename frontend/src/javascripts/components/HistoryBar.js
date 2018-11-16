@@ -78,10 +78,8 @@ class HistoryBar extends Component {
         selected: []
       },
       history: [...defaultImages],
-      click: {
         clickCount: 0,
         singleClickTimer: undefined,
-      }
     }
   }
 
@@ -113,6 +111,10 @@ class HistoryBar extends Component {
     })
   }
 
+  componentDidUpdate() {
+    console.log('after after' + this.state.clickCount)
+  }
+
   recordCurrentToHistory(e) {
     let history = this.state.history
     history.unshift(this.state.current)
@@ -121,11 +123,13 @@ class HistoryBar extends Component {
     })
   }
 
-  resolveClick (img) {
+  resolveClick_deprecated (img) {
     let updatedClickCount = this.state.click.clickCount + 1
+    console.log(this.state.click.clickCount) //HAHA
     switch (updatedClickCount) {
       case 1:
         let self = this
+        console.log("Single")
         let singleClickTimer = setTimeout(() => {
             self.setState({
               ...self.state,
@@ -145,7 +149,8 @@ class HistoryBar extends Component {
         })
         return 1
       case 2:
-        clearTimeout(this.state.click.singleClickTimer)
+        console.log("Double")
+        //clearTimeout(this.state.click.singleClickTimer)
         this.setState({
           ...this.state,
           click: {
@@ -158,6 +163,42 @@ class HistoryBar extends Component {
       default:
         return
     }
+  }
+
+  resolveClick(item){
+    let updatedClickCount = this.state.clickCount + 1
+    console.log(updatedClickCount)
+    console.log(this.state.clickCount)
+    if (updatedClickCount === 1) {
+        let self = this
+        var singleClickTimer = setTimeout(function() {
+            self.setState({
+              ...self.state,
+                clickCount: 0
+            })
+            self.previewImage(item);
+        }, 400);
+        this.setState({
+          ...this.state,
+            clickCount: 1,
+            singleClickTimerOngoing: singleClickTimer
+        })
+        return
+    } else if (updatedClickCount === 2) {
+        let self = this
+        let timeout = this.state.singleClickTimerOngoing
+        console.log("Before",this.state.clickCount)
+        this.setState({
+            ...this.state,
+              singleClickTimerOngoing: undefined,
+              clickCount: 0
+        }, () => {        console.log("After",self.state.clickCount)
+        clearTimeout(timeout);
+        self.selectImage(item);
+})
+
+    }
+    return true
   }
 
   previewImage(e) {
